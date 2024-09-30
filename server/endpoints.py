@@ -10,6 +10,8 @@ from flask_cors import CORS
 
 # import werkzeug.exceptions as wz
 
+import pytest
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -46,3 +48,17 @@ class Endpoints(Resource):
         """
         endpoints = sorted(rule.rule for rule in api.app.url_map.iter_rules())
         return {"Available endpoints": endpoints}
+
+# Kaitlyn's edits
+JOURNAL_EP = "/journalName"
+JOURNAL_RESP = 'Journal Name'
+@api.route('/journalName')
+class Journal(Resource):
+    def get(self):
+        """
+        An endpoint to display the name of this project's journal
+        """
+        return {JOURNAL_RESP : "SWEtastic-journal"}
+
+    
+
