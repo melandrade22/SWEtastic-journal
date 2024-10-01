@@ -50,15 +50,20 @@ class Endpoints(Resource):
         return {"Available endpoints": endpoints}
 
 
-# Kaitlyn's edits
-JOURNAL_EP = "/journalName"
+# Endpoint that returns journal name
+JOURNAL_EP = '/journalName'
 JOURNAL_RESP = 'Journal Name'
+NAME = "SWEtastic-journal"
 
 
-@api.route('/journalName')
-class Journal(Resource):
+@api.route(JOURNAL_EP)
+class JournalName(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting the journal name
+    """
     def get(self):
         """
-        An endpoint to display the name of this project's journal
+        Displays the name of the journal
         """
-        return {JOURNAL_RESP: "SWEtastic-journal"}
+        return {JOURNAL_RESP: NAME}
