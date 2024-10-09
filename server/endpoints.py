@@ -67,3 +67,15 @@ class JournalName(Resource):
         Displays the name of the journal
         """
         return {JOURNAL_RESP: NAME}
+
+@api.route(PEOPLE_EP)
+class People(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting journal people.
+    """
+    def get(self):
+        """
+        Retrieve the journal people.
+        """
+        return ppl.get_people()
