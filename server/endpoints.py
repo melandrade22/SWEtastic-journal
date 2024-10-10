@@ -4,8 +4,8 @@ The endpoint called `endpoints` will return all available endpoints.
 """
 # from http import HTTPStatus
 
-from flask import Flask  # , request
-from flask_restx import Resource, Api  # Namespace, fields
+from flask import Flask, request
+from flask_restx import Resource, Api  # , fields  # Namespace, fields
 from flask_cors import CORS
 
 import data.people as ppl
@@ -53,23 +53,34 @@ class Endpoints(Resource):
         return {"Available endpoints": endpoints}
 
 
-# Endpoint that returns journal name
-JOURNAL_EP = '/journalName'
-JOURNAL_RESP = 'Journal Name'
-NAME = "SWEtastic-journal"
+# Endpoint that returns journal title
+JOURNAL_EP = '/journalTitle'
+JOURNAL_RESP = 'Journal Title'
+TITLE = "SWEtastic-journal"
 
 
 @api.route(JOURNAL_EP)
-class JournalName(Resource):
+class JournalTitle(Resource):
     """
     This class handles creating, reading, updating
-    and deleting the journal name
+    and deleting the journal title
     """
     def get(self):
         """
-        Displays the name of the journal
+        Displays the journal's title
         """
-        return {JOURNAL_RESP: NAME}
+        return {JOURNAL_RESP: TITLE}
+
+    def put(self):
+        """
+        Updates the journal's title
+        """
+        global TITLE
+        title = request.json.get('title')
+        if title:
+            TITLE = title
+            return {"message": "Title updated successfully"}, 200
+        return {"message": "Title required"}, 400
 
 
 @api.route(PEOPLE_EP)
