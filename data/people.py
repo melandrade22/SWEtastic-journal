@@ -1,5 +1,5 @@
 """
-module will interface to the user's data 
+module will interface to the user's data
 """
 
 MIN_USER_NAME_LEN = 2
@@ -26,3 +26,14 @@ people_dict = {
         EMAIL: DEL_EMAIL,
     },
 }
+
+
+def get_people():
+    """
+    Our contract:
+        - No arguments.
+        - Returns a dictionary of users keyed on user email.
+        - Each user email must be the key for another dictionary.
+    """
+    people = people_dict
+    return people

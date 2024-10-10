@@ -8,6 +8,8 @@ from flask import Flask  # , request
 from flask_restx import Resource, Api  # Namespace, fields
 from flask_cors import CORS
 
+import data.people as ppl
+
 # import werkzeug.exceptions as wz
 
 # import pytest
@@ -20,6 +22,7 @@ ENDPOINT_EP = '/endpoints'
 ENDPOINT_RESP = 'Available endpoints'
 HELLO_EP = '/hello'
 HELLO_RESP = 'hello'
+PEOPLE_EP = '/people'
 
 
 @api.route(HELLO_EP)
@@ -67,6 +70,7 @@ class JournalName(Resource):
         Displays the name of the journal
         """
         return {JOURNAL_RESP: NAME}
+
 
 @api.route(PEOPLE_EP)
 class People(Resource):
