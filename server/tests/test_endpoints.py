@@ -13,6 +13,8 @@ import pytest
 
 from data.people import NAME
 
+import data.people as ppl
+
 import server.endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
@@ -52,3 +54,4 @@ def test_read_people():
         assert isinstance(_id, str)
         assert len(_id) > 0
         assert NAME in person
+
