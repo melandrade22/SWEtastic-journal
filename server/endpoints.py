@@ -99,7 +99,7 @@ class People(Resource):
         """
         Retrieve the journal people.
         """
-        return ppl.get_people()
+        return ppl.read()
 
 
 PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {

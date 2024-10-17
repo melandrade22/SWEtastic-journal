@@ -28,7 +28,7 @@ people_dict = {
 }
 
 
-def get_people():
+def read():
     """
     Our contract:
         - No arguments.
