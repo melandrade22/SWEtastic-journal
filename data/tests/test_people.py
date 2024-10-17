@@ -3,6 +3,7 @@ import pytest
 import data.people as ppl
 
 ADD_EMAIL = 'person@nyu.edu'
+UPDATE_EMAIL = 'kh3599@nyu.edu'
 
 def test_read():
     people = ppl.read()
@@ -45,3 +46,4 @@ def test_create_duplicate():
     with pytest.raises(ValueError):
         ppl.create('Do not care about name',
                    'Or affiliation', ppl.TEST_EMAIL)
+

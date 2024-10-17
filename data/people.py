@@ -11,6 +11,7 @@ EMAIL = 'email'
 
 TEST_EMAIL = 'aae2042@nyu.edu'
 DEL_EMAIL = 'delete@nyu.edu'
+UPDATE_EMAIL = 'updateAffiliation@nyu.edu'
 
 people_dict = {
     TEST_EMAIL: {
@@ -25,6 +26,12 @@ people_dict = {
         AFFILIATION: 'NYU',
         EMAIL: DEL_EMAIL,
     },
+    UPDATE_EMAIL: { # for testing update affiliation
+        NAME: 'Kaitlyn Huynh',
+        ROLES: [],
+        AFFILIATION: 'OldAffiliation',
+        EMAIL: UPDATE_EMAIL,
+    }
 }
 
 
@@ -51,6 +58,14 @@ def delete(_id):
     people = read()
     if _id in people:
         del people[_id]
+        return _id
+    else:
+        return None
+    
+def update(_id, _new_affiliation): # given an (_id)/email, update the affiliation
+    people = read()
+    if _id in people:
+        people[_id]["affiliation"] = _new_affiliation
         return _id
     else:
         return None

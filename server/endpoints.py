@@ -133,3 +133,25 @@ class PeopleCreate(Resource):
             MESSAGE: 'This person has been successfully added!',
             RETURN: ret,
         }
+
+
+@api.route(f'{PEOPLE_EP}/updateAffiliation/<_id>/<_new_affiliation>')
+class PeopleAffiliationUpdate(Resource):
+    """
+    Update a person's affiliation given their _id and the _new_affiliation
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    def put(self, _id, _new_affiliation):
+        """
+        Update an affiliation
+        """
+        try:
+            ret = ppl.update(_id, _new_affiliation)
+        except Exception as err:
+            raise wz.NotAcceptable(f'There was an error with updating affiliation'
+                                   f'{err=}')
+        return {
+            MESSAGE: ('This affiliation has been successfully updated!' if ret else 'Failed to update affiliation'),
+            RETURN: ret,
+        }

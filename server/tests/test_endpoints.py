@@ -18,7 +18,7 @@ import data.people as ppl
 import server.endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
-
+NEW_AFFILIATION = "NewAffiliation"
 
 def test_hello():
     resp = TEST_CLIENT.get(ep.HELLO_EP)
@@ -73,3 +73,6 @@ def test_delete():
 
     # assert that DEL_EMAIL is no longer in the people_after dictionary
     assert ppl.DEL_EMAIL not in people_after
+
+
+
