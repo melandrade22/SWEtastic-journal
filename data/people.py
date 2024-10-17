@@ -26,7 +26,7 @@ people_dict = {
         AFFILIATION: 'NYU',
         EMAIL: DEL_EMAIL,
     },
-    UPDATE_EMAIL: { # for testing update affiliation
+    UPDATE_EMAIL: {  # for testing update affiliation
         NAME: 'Kaitlyn Huynh',
         ROLES: [],
         AFFILIATION: 'OldAffiliation',
@@ -61,8 +61,9 @@ def delete(_id):
         return _id
     else:
         return None
-    
-def update(_id, _new_affiliation): # given an (_id)/email, update the affiliation
+
+
+def update(_id, _new_affiliation):
     people = read()
     if _id in people:
         people[_id]["affiliation"] = _new_affiliation

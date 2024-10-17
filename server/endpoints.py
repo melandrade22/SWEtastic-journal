@@ -149,14 +149,12 @@ class PeopleAffiliationUpdate(Resource):
         try:
             ret = ppl.update(_id, _new_affiliation)
         except Exception as err:
-            raise wz.NotAcceptable(f'Error updating affiliation'
-                                   f'{err=}')
+            raise wz.NotAcceptable(f'Error updating affiliation {err}')
         if ret:
             msg = 'This affiliation has been successfully updated!'
         else:
             msg = "Failed to update affiliation"
             return {
-            MESSAGE: msg,
-            RETURN: ret,
-        }
-        
+                MESSAGE: msg,
+                RETURN: ret,
+            }

@@ -75,4 +75,3 @@ def test_delete():
     assert ppl.DEL_EMAIL not in people_after
 
 
-
