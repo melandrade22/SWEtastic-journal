@@ -14,13 +14,13 @@ def test_read():
         assert ppl.NAME in person
 
 
-# def test_delete():
-#     people = ppl.read()
-#     old_len = len(people)
-#     ppl.delete(ppl.DEL_EMAIL)
-#     people = ppl.read()
-#     assert len(people) < old_len
-#     assert ppl.DEL_EMAIL not in people
+def test_delete():
+    people = ppl.read()
+    old_len = len(people)
+    ppl.delete(ppl.DEL_EMAIL)
+    people = ppl.read()
+    assert len(people) < old_len
+    assert ppl.DEL_EMAIL not in people
 
 
 def test_create():
