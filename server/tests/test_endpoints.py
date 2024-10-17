@@ -20,6 +20,7 @@ import server.endpoints as ep
 TEST_CLIENT = ep.app.test_client()
 NEW_AFFILIATION = "NewAffiliation"
 
+
 def test_hello():
     resp = TEST_CLIENT.get(ep.HELLO_EP)
     resp_json = resp.get_json()
@@ -75,3 +76,8 @@ def test_delete():
     assert ppl.DEL_EMAIL not in people_after
 
 
+def test_update_affiliation_endpoint():
+    new_affiliation = "New Affiliation"
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/updateAffiliation/{ppl.UPDATE_EMAIL}/{new_affiliation}')
+    assert resp.json["return"] == 200
+    

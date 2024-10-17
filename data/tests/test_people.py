@@ -48,4 +48,7 @@ def test_create_duplicate():
                    'Or affiliation', ppl.TEST_EMAIL)
 
 
-
+def test_update_affiliation():
+    ppl.update(ADD_EMAIL, "NewAffiliation")
+    if ADD_EMAIL in ppl.read():
+        assert ppl.read()[ADD_EMAIL]["affiliation"] == "NewAffiliation"

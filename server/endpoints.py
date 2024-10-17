@@ -152,9 +152,11 @@ class PeopleAffiliationUpdate(Resource):
             raise wz.NotAcceptable(f'Error updating affiliation {err}')
         if ret:
             msg = 'This affiliation has been successfully updated!'
+            ret = 200
         else:
             msg = "Failed to update affiliation"
-            return {
-                MESSAGE: msg,
-                RETURN: ret,
-            }
+            ret = 404
+        return {
+            MESSAGE: msg,
+            RETURN: ret,
+        }
