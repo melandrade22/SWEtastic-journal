@@ -55,3 +55,21 @@ def test_read_people():
         assert len(_id) > 0
         assert NAME in person
 
+
+def test_delete():
+    # read the dictionary before deletion
+    people_before = ppl.read()
+    # store the original length of the people dictionary
+    original_length = len(people_before)
+
+    #  delete the email 
+    ppl.delete(ppl.DEL_EMAIL)
+
+    # call the read function to read the dictionary after deletion
+    people_after = ppl.read()
+
+    # assert that the length decreased by 1
+    assert len(people_after) == original_length - 1, "The number of people did not decrease!"
+
+    # assert that DEL_EMAIL is no longer in the people_after dictionary
+    assert ppl.DEL_EMAIL not in people_after
