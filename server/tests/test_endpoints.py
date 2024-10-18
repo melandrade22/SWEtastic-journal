@@ -83,15 +83,16 @@ def test_update_affiliation_endpoint():
     
 
 def test_add_role():
-    email = "test@example.com"
+    email = "aae2042@nyu.edu"
     role = "editor"
     resp = TEST_CLIENT.put(f'/people/{email}/addRole/{role}')
     assert resp.status == "200 OK"
     person = ppl.get_person(email)
     assert role in person['roles']
 
+
 def test_remove_role():
-    email = "test@example.com"
+    email = "aae2042@nyu.edu"
     role = "editor"
     resp = TEST_CLIENT.put(f'/people/{email}/removeRole/{role}')
     assert resp.status == "200 OK"

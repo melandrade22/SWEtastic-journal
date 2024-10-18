@@ -171,6 +171,7 @@ class AddRole(Resource):
         ppl.add_role(email, role)
         return {"message": f"Role '{role}' added to {email}"}, 200
 
+
 @api.route('/people/<string:email>/removeRole/<string:role>')
 class RemoveRole(Resource):
     def put(self, email, role):

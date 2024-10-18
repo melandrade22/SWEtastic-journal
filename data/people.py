@@ -90,3 +90,17 @@ def update(_id, _new_affiliation):
         return _id
     else:
         return None
+
+
+def get_person(email: str):
+    """
+    Retrieve a person by their email.
+    Args:
+        email: The email of the person to retrieve.
+    Returns:
+        The person's data as a dictionary if found, else raises a ValueError.
+    """
+    if email in people_dict:
+        return people_dict[email]
+    else:
+        raise ValueError(f'Person with {email} not found')
