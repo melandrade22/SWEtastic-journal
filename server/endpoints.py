@@ -160,3 +160,22 @@ class PeopleAffiliationUpdate(Resource):
             MESSAGE: msg,
             RETURN: ret,
         }
+
+
+@api.route('/people/<string:email>/addRole/<string:role>')
+class AddRole(Resource):
+    def put(self, email, role):
+        person = ppl.get_person(email)
+        if not person:
+            return {"message": "Person not found"}, 404
+        ppl.add_role(email, role)
+        return {"message": f"Role '{role}' added to {email}"}, 200
+
+@api.route('/people/<string:email>/removeRole/<string:role>')
+class RemoveRole(Resource):
+    def put(self, email, role):
+        person = ppl.get_person(email)
+        if not person:
+            return {"message": "Person not found"}, 404
+        ppl.remove_role(email, role)
+        return {"message": f"Role '{role}' removed from {email}"}, 200
