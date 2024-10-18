@@ -46,13 +46,30 @@ def read():
     return people
 
 
-def create(name: str, affiliation: str, email: str):
+def create(name: str, affiliation: str, email: str, roles = None):
+    if roles is None:
+        roles = []
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
     people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                          EMAIL: email}
+                          EMAIL: email, ROLES: roles}
     return email
 
+# New function to add a role to an existing person
+def add_role(email: str, role: str):
+    if email not in people_dict:
+        raise ValueError(f'Person with {email} not found')
+    if role not in people_dict[email][ROLES]:
+        people_dict[email][ROLES].append(role)
+    return email
+
+# New function to remove a role from an existing person
+def remove_role(email: str, role: str):
+    if email not in people_dict:
+        raise ValueError(f'Person with {email} not found')
+    if role in people_dict[email][ROLES]:
+        people_dict[email][ROLES].remove(role)
+    return email
 
 def delete(_id):
     people = read()
