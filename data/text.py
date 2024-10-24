@@ -47,8 +47,13 @@ def delete(key: str) -> str:
     else:
         return f"No page found with key: {key}"
 
-
-def update():
+# Function to update the text field of a specific key in the test dict
+def update_text(key: str, val: str) -> str:
+    if key in text_dict:
+        text_dict[key][TEXT] = val
+        return f"Updated page {key} oftitle {text_dict[key][TITLE ]} with text: {val}"
+    else:
+        return f"No page found with key: {key}"
     pass
 
 
