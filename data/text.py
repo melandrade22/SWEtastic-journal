@@ -49,12 +49,18 @@ def delete(key: str) -> str:
 
 # Function to update the text field of a specific key in the test dict
 def update_text(key: str, val: str) -> str:
+    """
+    Update a page's text specified by its key with a new text value
+    Args:
+    key(str): The key for page to update
+    val(str): The value to update the page key's TEXT field with
+    Returns a string with message of success or not
+    """
     if key in text_dict:
         text_dict[key][TEXT] = val
         return f"Updated page {key} oftitle {text_dict[key][TITLE ]} with text: {val}"
     else:
         return f"No page found with key: {key}"
-    pass
 
 
 def read():
