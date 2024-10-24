@@ -5,6 +5,24 @@ import data.people as ppl
 ADD_EMAIL = 'person@nyu.edu'
 UPDATE_EMAIL = 'kh3599@nyu.edu'
 
+
+NO_AT = 'jkajsd'
+NO_NAME = '@kalsj'
+NO_DOMAIN = 'kajshd@'
+
+
+def test_is_valid_email_no_at():
+    assert not ppl.is_valid_email(NO_AT)
+
+
+def test_is_valid_no_name():
+    assert not ppl.is_valid_email(NO_NAME)
+
+
+def test_is_valid_no_domain():
+    assert not ppl.is_valid_email(NO_DOMAIN)
+
+    
 def test_read():
     people = ppl.read()
     assert isinstance(people, dict)

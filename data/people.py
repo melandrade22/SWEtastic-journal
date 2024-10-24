@@ -1,6 +1,8 @@
 """
 module will interface to the user's data
 """
+import re
+# import data.roles as rls
 
 MIN_USER_NAME_LEN = 2
 # fields
@@ -35,6 +37,40 @@ people_dict = {
 }
 
 
+CHAR_OR_DIGIT = 'A-Za-z0-9'
+PRT_CHAR = "!#$%&'*+-/=?^_`{|}~"
+TLD = r'\.[A-Za-z]{2,6}'
+
+
+def is_valid_email(email: str) -> bool:
+    pattern = (
+        rf"(?!-)[{CHAR_OR_DIGIT}{PRT_CHAR}].*"
+        rf"@(?!-)[{CHAR_OR_DIGIT}](?<!-).*"
+        rf"{TLD}$"
+    )
+    return re.match(pattern, email)
+
+
+def is_valid_person(name: str, affiliation: str, email: str,
+                    roles: str) -> bool:
+    if email in people_dict:
+        raise ValueError(f'Adding duplicate {email=}')
+    if not is_valid_email(email):
+        raise ValueError(f'Invalid email: {email}')
+    # if not rls.is_valid(roles):
+    #     raise ValueError(f'Invalid role: {roles}')
+    return True
+
+
+def create(name: str, affiliation: str, email: str, roles=None):
+    if roles is None:
+        roles = []
+    if is_valid_person(name, affiliation, email, roles):
+        people_dict[email] = {NAME: name, AFFILIATION: affiliation,
+                              EMAIL: email, ROLES: roles}
+        return email
+
+
 def read():
     """
     Our contract:
@@ -44,16 +80,6 @@ def read():
     """
     people = people_dict
     return people
-
-
-def create(name: str, affiliation: str, email: str, roles=None):
-    if roles is None:
-        roles = []
-    if email in people_dict:
-        raise ValueError(f'Adding duplicate {email=}')
-    people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                          EMAIL: email, ROLES: roles}
-    return email
 
 
 # New function to add a role to an existing person
