@@ -32,8 +32,20 @@ def create():
     pass
 
 
-def delete():
-    pass
+def delete(key: str) -> str:
+    """
+    Deletes a page by its key from the text_dict.
+    If the key is not found, return a message indicating so.
+    Args:
+    key (str): The key for the page to delete.
+    Returns:
+        str: A message indicating the result of the deletion.
+    """
+    if key in text_dict:
+        del text_dict[key]
+        return f"Deleted page with key: {key}"
+    else:
+        return f"No page found with key: {key}"
 
 
 def update():
