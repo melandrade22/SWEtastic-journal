@@ -35,8 +35,24 @@ text_dict = {
 }
 
 
-def create():
-    pass
+def create(key: str, title: str, text: str) -> str:
+    """
+    Creates a new page in the text_dict.
+    Args:
+    key (str): The key for the new page.
+    title (str): The title of the new page.
+    text (str): The text content for the new page.
+    Returns:
+        str: A message indicating the result of the creation.
+    """
+    if key in text_dict:
+        return f"A page with key '{key}' already exists."
+    else:
+        text_dict[key] = {
+            TITLE: title,
+            TEXT: text
+        }
+        return f"Created page with key: {key}, title: {title}"
 
 
 def delete(key: str) -> str:
