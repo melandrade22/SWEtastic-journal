@@ -11,6 +11,9 @@ EMAIL = 'email'
 TEST_KEY = 'HomePage'
 SUBM_KEY = 'SubmissionsPage'
 DEL_KEY = 'DeletePage'
+UPDATE_KEY = 'UpdatePage'
+
+UPDATE_TEST_VALUE = 'This is the updated value of text.'
 
 text_dict = {
     TEST_KEY: {
@@ -25,6 +28,10 @@ text_dict = {
         TITLE: 'Delete Page',
         TEXT: 'This is a text to delete.',
     },
+    UPDATE_KEY: {
+        TITLE: 'Update Page',
+        TEXT: 'This value will be updated.',
+    }
 }
 
 
@@ -59,7 +66,7 @@ def update_text(key: str, val: str) -> str:
     """
     if key in text_dict:
         text_dict[key][TEXT] = val
-        return f"Updated page {key} with text: {val}"
+        return f"Update page {key} with text: {val}"
     else:
         return f"No page found with key: {key}"
 
