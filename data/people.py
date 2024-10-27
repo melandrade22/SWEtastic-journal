@@ -37,19 +37,30 @@ people_dict = {
 }
 
 
-CHAR_OR_DIGIT = 'A-Za-z0-9'
-PRT_CHAR = "!#$%&'*+.-/=?^_`{|}~"
+CHR_NUM = 'A-Za-z0-9'
+PRT_CHR = "!#$%&'*+.-/=?^_`{|}~"
+SPC_CHR = "(),:;<>@[\\] \t"
+LCL_CHR = rf"{CHR_NUM}{PRT_CHR}"
 TLD = r'\.[A-Za-z]{2,6}'
+
+
+#  Unquoted Local Part
+ULP = (
+    rf"(?:(^[{CHR_NUM}](?!.*\.\.)[{LCL_CHR}].*[{CHR_NUM}])|(^[{CHR_NUM}]+))"
+)
+
+# Quotated Local Part
+QLP = (
+    rf"^\"[{LCL_CHR}{SPC_CHR}]+\""
+)
 
 
 def is_valid_email(email: str) -> bool:
     pattern = (
-        rf"^[{CHAR_OR_DIGIT}]"
-        rf"(?!.*\.\.)"
-        rf"[{CHAR_OR_DIGIT}{PRT_CHAR}].*[{CHAR_OR_DIGIT}]"
+        rf"(?:({ULP})|({QLP}))"
         rf"@"
-        rf"(?=([A-Za-z])[{CHAR_OR_DIGIT}])"
-        rf"[{CHAR_OR_DIGIT}'-'].*[{CHAR_OR_DIGIT}]"
+        rf"(?=([A-Za-z])[{CHR_NUM}])"
+        rf"[{CHR_NUM}'-'].*[{CHR_NUM}]"
         rf"{TLD}$"
     )
     return re.match(pattern, email)

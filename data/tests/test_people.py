@@ -8,7 +8,9 @@ UPDATE_EMAIL = 'kh3599@nyu.edu'
 MID_DMN_HYPN = 'email@ex-ample.com'
 MID_DMN_DOT = 'email@ex.ample.com'
 MID_DOT_LOCAL = 'very.common@example.com'
-
+SNGLE_LOCAL = "x@email.com"
+QT_DBL_DOT = "\"john..doe\"@example.org"
+QT_SPACE = "\" \"@example.org"
 
 # Invalid Emails
 NO_AT = 'jkajsd'
@@ -28,12 +30,25 @@ NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 def test_is_valid_email_mid_dmn_hypn():
     assert ppl.is_valid_email(MID_DMN_HYPN)
 
+
 def test_is_valid_email_mid_dmn_dot():
     assert ppl.is_valid_email(MID_DMN_DOT)
 
 
 def test_is_valid_email_mid_dot_local():
     assert ppl.is_valid_email(MID_DOT_LOCAL)
+
+
+def test_is_valid_email_sngle_local():
+    assert ppl.is_valid_email(SNGLE_LOCAL)
+
+
+def test_is_valid_email_qt_dbl_dot():
+    assert ppl.is_valid_email(QT_DBL_DOT)
+
+
+def test_is_valid_email_qt_space():
+    assert ppl.is_valid_email(QT_SPACE)
 
 
 def test_is_valid_email_no_at():
