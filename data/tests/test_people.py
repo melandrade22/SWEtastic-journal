@@ -2,27 +2,79 @@ import pytest
 
 import data.people as ppl
 
+# Valid Emails
 ADD_EMAIL = 'person@nyu.edu'
 UPDATE_EMAIL = 'kh3599@nyu.edu'
+MID_DMN_HYPN = 'email@ex-ample.com'
+MID_DOT_LOCAL = 'very.common@example.com'
 
 
+# Invalid Emails
 NO_AT = 'jkajsd'
 NO_NAME = '@kalsj'
 NO_DOMAIN = 'kajshd@'
+NO_AFTER_TLD = 'email@example.com (Joe Smith)'
+NO_CONSEC_DOT = 'Abc..123@example.com'
+NO_HYPM_DMN_BGN = 'email@-example.com'
+NO_SPEC_CHAR = '#@%^%#$@#$@#.com'
+NO_END_DMN_HYPN = 'email@example-.com'
+NO_ALL_NUM_DMN = 'email@123456789.com'
+NO_UNCMMN_TLD = 'email@example.education'
+NO_STRT_DOT_LOCAL = '.email@co.com'
+
+
+def test_is_valid_email_mid_dmn_hypn():
+    assert ppl.is_valid_email(MID_DMN_HYPN)
+
+
+def test_is_valid_email_mid_dot_local():
+    assert ppl.is_valid_email(MID_DOT_LOCAL)
 
 
 def test_is_valid_email_no_at():
     assert not ppl.is_valid_email(NO_AT)
 
 
-def test_is_valid_no_name():
+def test_is_valid_email_no_name():
     assert not ppl.is_valid_email(NO_NAME)
 
 
-def test_is_valid_no_domain():
+def test_is_valid_email_no_domain():
     assert not ppl.is_valid_email(NO_DOMAIN)
 
-    
+
+def test_is_valid_email_no_after_tld():
+    assert not ppl.is_valid_email(NO_AFTER_TLD)
+
+
+def test_is_valid_email_no_consec_dot():
+    assert not ppl.is_valid_email(NO_CONSEC_DOT)
+
+
+def test_is_valid_email_no_hypm_dmn_bgn():
+    assert not ppl.is_valid_email(NO_HYPM_DMN_BGN)
+
+
+def test_is_valid_email_no_spec_char():
+    assert not ppl.is_valid_email(NO_SPEC_CHAR)
+
+
+def test_is_valid_email_no_end_dmn_hypn():
+    assert not ppl.is_valid_email(NO_END_DMN_HYPN)
+
+
+def test_is_valid_email_no_all_num_dmn():
+    assert not ppl.is_valid_email(NO_ALL_NUM_DMN)
+
+
+def test_is_valid_email_no_uncmmn_tld():
+    assert not ppl.is_valid_email(NO_UNCMMN_TLD)
+
+
+def test_is_valid_email_no_strt_dot_local():
+    assert not ppl.is_valid_email(NO_STRT_DOT_LOCAL)
+
+
 def test_read():
     people = ppl.read()
     assert isinstance(people, dict)

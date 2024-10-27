@@ -38,14 +38,18 @@ people_dict = {
 
 
 CHAR_OR_DIGIT = 'A-Za-z0-9'
-PRT_CHAR = "!#$%&'*+-/=?^_`{|}~"
+PRT_CHAR = "!#$%&'*+.-/=?^_`{|}~"
 TLD = r'\.[A-Za-z]{2,6}'
 
 
 def is_valid_email(email: str) -> bool:
     pattern = (
-        rf"(?!-)[{CHAR_OR_DIGIT}{PRT_CHAR}].*"
-        rf"@(?!-)[{CHAR_OR_DIGIT}](?<!-).*"
+        rf"^[{CHAR_OR_DIGIT}]"
+        rf"(?!.*\.\.)"
+        rf"[{CHAR_OR_DIGIT}{PRT_CHAR}].*"
+        rf"@"
+        rf"(?=([A-Za-z])[{CHAR_OR_DIGIT}])"
+        rf"[{CHAR_OR_DIGIT}'-'].*[{CHAR_OR_DIGIT}]"
         rf"{TLD}$"
     )
     return re.match(pattern, email)
