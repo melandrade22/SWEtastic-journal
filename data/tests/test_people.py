@@ -6,6 +6,7 @@ import data.people as ppl
 ADD_EMAIL = 'person@nyu.edu'
 UPDATE_EMAIL = 'kh3599@nyu.edu'
 MID_DMN_HYPN = 'email@ex-ample.com'
+MID_DMN_DOT = 'email@ex.ample.com'
 MID_DOT_LOCAL = 'very.common@example.com'
 
 
@@ -21,10 +22,14 @@ NO_END_DMN_HYPN = 'email@example-.com'
 NO_ALL_NUM_DMN = 'email@123456789.com'
 NO_UNCMMN_TLD = 'email@example.education'
 NO_STRT_DOT_LOCAL = '.email@co.com'
+NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 
 
 def test_is_valid_email_mid_dmn_hypn():
     assert ppl.is_valid_email(MID_DMN_HYPN)
+
+def test_is_valid_email_mid_dmn_dot():
+    assert ppl.is_valid_email(MID_DMN_DOT)
 
 
 def test_is_valid_email_mid_dot_local():
@@ -73,6 +78,10 @@ def test_is_valid_email_no_uncmmn_tld():
 
 def test_is_valid_email_no_strt_dot_local():
     assert not ppl.is_valid_email(NO_STRT_DOT_LOCAL)
+
+
+def test_is_valid_email_no_end_dot_local():
+    assert not ppl.is_valid_email(NO_END_DOT_LOCAL)
 
 
 def test_read():

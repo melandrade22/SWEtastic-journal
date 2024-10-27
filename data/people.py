@@ -46,7 +46,7 @@ def is_valid_email(email: str) -> bool:
     pattern = (
         rf"^[{CHAR_OR_DIGIT}]"
         rf"(?!.*\.\.)"
-        rf"[{CHAR_OR_DIGIT}{PRT_CHAR}].*"
+        rf"[{CHAR_OR_DIGIT}{PRT_CHAR}].*[{CHAR_OR_DIGIT}]"
         rf"@"
         rf"(?=([A-Za-z])[{CHAR_OR_DIGIT}])"
         rf"[{CHAR_OR_DIGIT}'-'].*[{CHAR_OR_DIGIT}]"
