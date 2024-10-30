@@ -19,6 +19,10 @@ def is_valid(code: str) -> bool:
     return code in ROLES
 
 
+def get_role_codes() -> list:
+    return list(ROLES.keys())
+
+
 def main():
     print(get_roles())
 
