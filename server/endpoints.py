@@ -9,6 +9,7 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 from flask_cors import CORS
 
 import data.people as ppl
+import data.text as txt
 
 import werkzeug.exceptions as wz
 
@@ -180,3 +181,15 @@ class RemoveRole(Resource):
             return {"message": "Person not found"}, 404
         ppl.remove_role(email, role)
         return {"message": f"Role '{role}' removed from {email}"}, 200
+
+
+# Given a journal title and new text content, update that journal's text
+@api.route(f'{JOURNAL_EP}/<_title>/<_content>')
+class UpdateJournalText(Resource):
+    def put(self, _title, _content):
+        journal = txt.update_text(_title, _content)
+        success_msg = f"Update page {_title} with text: {_content}"
+        ret_val = {"message": f"Journal '{_title}' updated to {_content}"}, 200
+        if journal == success_msg:  # update was successful
+            return ret_val
+        return {"message": f"Failed to update '{_title}"}, 400
