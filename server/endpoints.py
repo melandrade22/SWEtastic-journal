@@ -183,8 +183,7 @@ class RemoveRole(Resource):
         return {"message": f"Role '{role}' removed from {email}"}, 200
 
 
-
-@api.route(f'{JOURNAL_EP}/pages') # Get all pages in a journal
+@api.route(f'{JOURNAL_EP}/pages')  # Get all pages in a journal
 class JournalPages(Resource):
     def get(self):
         contents = txt.read()
