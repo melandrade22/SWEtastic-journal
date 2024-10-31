@@ -72,7 +72,7 @@ def delete(key: str) -> str:
 
 
 # Function to update the text field of a specific key in the test dict
-def update_text(key: str, val: str) -> str:
+def update_text(key, val):
     """
     Update a page's text specified by its key with a new text value
     Args:

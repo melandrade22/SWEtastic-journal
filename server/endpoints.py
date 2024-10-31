@@ -188,3 +188,16 @@ class JournalPages(Resource):
     def get(self):
         contents = txt.read()
         return contents
+
+
+# Given a journal title and new text value, update that journal's text
+@api.route(f'{JOURNAL_EP}/update/<_key>/<_val>')
+class UpdateJournalText(Resource):
+    # Note: _val should be one continguous string
+    def put(self, _key, _val):
+        journal = txt.update_text(_key, _val)
+        success_msg = f"Update page {_key} with text: {_val}"
+        ret_val = {"message": f"Journal '{_key}' updated to {_val}"}, 200
+        if journal == success_msg:  # update was successful
+            return ret_val
+        return {"message": f"Failed to update {_key}"}, 400
