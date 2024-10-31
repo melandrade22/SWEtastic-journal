@@ -98,3 +98,24 @@ def test_remove_role():
     assert resp.status == "200 OK"
     person = ppl.get_person(email)
     assert role not in person['roles']
+
+
+def test_create_journal_page():
+    new_page_data = {
+        "key": "testPageKey",
+        "title": "Test Page Title",
+        "text": "This is a test page content."
+    }
+
+    # Send POST request to the create endpoint
+    resp = TEST_CLIENT.post(f'{ep.JOURNAL_EP}/create', json=new_page_data)
+    resp_json = resp.get_json()
+
+    # Check that the response status is 201 Created
+    assert resp.status_code == 201, "Expected status code 201 Created"
+    assert resp_json["message"] == "Page created successfully"
+
+    # Verify that the page exists by attempting to read it
+    created_page = txt.read_one(new_page_data["key"])
+    assert created_page["title"] == new_page_data["title"]
+    assert created_page["text"] == new_page_data["text"]
