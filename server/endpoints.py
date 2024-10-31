@@ -205,10 +205,12 @@ class UpdateJournalText(Resource):
 
 # Define model for creating a new journal page
 PAGE_CREATE_FIELDS = api.model('CreateNewPageEntry', {
-    txt.KEY: fields.String(required=True, description="Unique key for the page"),
+    txt.KEY: fields.String(required=True,
+                           description="Unique key for the page"),
     txt.TITLE: fields.String(required=True, description="Title of the page"),
     txt.TEXT: fields.String(required=True, description="Content of the page"),
 })
+
 
 @api.route(f'{JOURNAL_EP}/create')
 class JournalPageCreate(Resource):
@@ -228,6 +230,8 @@ class JournalPageCreate(Resource):
             text = request.json.get(txt.TEXT)
             # Call the create function to add the page
             result = txt.create(key, title, text)
-            return {"message": "Page created successfully", "result": result}, HTTPStatus.CREATED
+            return {"message": "Page created successfully",
+                    "result": result}, HTTPStatus.CREATED
         except Exception as e:
-            return {"message": f"Failed to create page: {e}"}, HTTPStatus.BAD_REQUEST
+            return {"message":
+                    f"Failed to create page: {e}"}, HTTPStatus.BAD_REQUEST

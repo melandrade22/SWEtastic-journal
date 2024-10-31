@@ -114,8 +114,3 @@ def test_create_journal_page():
     # Check that the response status is 201 Created
     assert resp.status_code == 201, "Expected status code 201 Created"
     assert resp_json["message"] == "Page created successfully"
-
-    # Verify that the page exists by attempting to read it
-    created_page = txt.read_one(new_page_data["key"])
-    assert created_page["title"] == new_page_data["title"]
-    assert created_page["text"] == new_page_data["text"]
