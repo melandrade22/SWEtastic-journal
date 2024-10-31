@@ -201,3 +201,33 @@ class UpdateJournalText(Resource):
         if journal == success_msg:  # update was successful
             return ret_val
         return {"message": f"Failed to update {_key}"}, 400
+
+
+# Define model for creating a new journal page
+PAGE_CREATE_FIELDS = api.model('CreateNewPageEntry', {
+    txt.KEY: fields.String(required=True, description="Unique key for the page"),
+    txt.TITLE: fields.String(required=True, description="Title of the page"),
+    txt.TEXT: fields.String(required=True, description="Content of the page"),
+})
+
+@api.route(f'{JOURNAL_EP}/create')
+class JournalPageCreate(Resource):
+    """
+    Create a new journal page.
+    """
+    @api.response(HTTPStatus.CREATED, 'Page created successfully')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Invalid data provided')
+    @api.expect(PAGE_CREATE_FIELDS)
+    def post(self):
+        """
+        Add a new journal page with a unique key, title, and text.
+        """
+        try:
+            key = request.json.get(txt.KEY)
+            title = request.json.get(txt.TITLE)
+            text = request.json.get(txt.TEXT)
+            # Call the create function to add the page
+            result = txt.create(key, title, text)
+            return {"message": "Page created successfully", "result": result}, HTTPStatus.CREATED
+        except Exception as e:
+            return {"message": f"Failed to create page: {e}"}, HTTPStatus.BAD_REQUEST
