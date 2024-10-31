@@ -1,6 +1,6 @@
 import pytest
 import data.people as ppl
-from data.roles import TEST_CODE as TEST_ROLE_CODE
+# from data.roles import TEST_CODE as TEST_ROLE_CODE
 
 # Valid Emails
 ADD_EMAIL = 'person@nyu.edu'
