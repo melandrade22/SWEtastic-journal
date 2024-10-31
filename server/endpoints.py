@@ -183,13 +183,9 @@ class RemoveRole(Resource):
         return {"message": f"Role '{role}' removed from {email}"}, 200
 
 
-# Given a journal title and new text content, update that journal's text
-@api.route(f'{JOURNAL_EP}/<_title>/<_content>')
-class UpdateJournalText(Resource):
-    def put(self, _title, _content):
-        journal = txt.update_text(_title, _content)
-        success_msg = f"Update page {_title} with text: {_content}"
-        ret_val = {"message": f"Journal '{_title}' updated to {_content}"}, 200
-        if journal == success_msg:  # update was successful
-            return ret_val
-        return {"message": f"Failed to update '{_title}"}, 400
+
+@api.route(f'{JOURNAL_EP}/pages') # Get all pages in a journal
+class JournalPages(Resource):
+    def get(self):
+        contents = txt.read()
+        return contents
