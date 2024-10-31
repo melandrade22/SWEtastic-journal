@@ -133,6 +133,12 @@ def update(_id, _new_affiliation):
         return None
 
 
+def has_role(person: dict, role: str) -> bool:
+    if role in person.get(ROLES):
+        return True
+    return False
+
+
 def get_person(email: str):
     """
     Retrieve a person by their email.
