@@ -1,5 +1,7 @@
 import pytest
 import data.people as ppl
+from data.roles import TEST_CODE as TEST_ROLE_CODE
+
 # Valid Emails
 ADD_EMAIL = 'person@nyu.edu'
 UPDATE_EMAIL = 'kh3599@nyu.edu'
@@ -25,6 +27,12 @@ NO_STRT_DOT_LOCAL = '.email@co.com'
 NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 
 TEMP_EMAIL = 'temp_person@temp.org'
+
+@pytest.fixture(scope='function')
+def temp_person():
+    _id = ppl.create('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
+    yield _id
+    ppl.delete(_id)
 
 def test_is_valid_email_mid_dmn_hypn():
     assert ppl.is_valid_email(MID_DMN_HYPN)
