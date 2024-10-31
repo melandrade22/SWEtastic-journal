@@ -1,5 +1,6 @@
 import pytest
 import data.people as ppl
+from data.roles import TEST_CODE as TEST_ROLE_CODE
 
 # Valid Emails
 ADD_EMAIL = 'person@nyu.edu'
@@ -25,6 +26,7 @@ NO_UNCMMN_TLD = 'email@example.education'
 NO_STRT_DOT_LOCAL = '.email@co.com'
 NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 
+TEMP_EMAIL = 'temp_person@temp.org'
 
 @pytest.fixture(scope='function')
 def temp_person():
