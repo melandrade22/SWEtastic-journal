@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch
 import data.people as ppl
 
 # Valid Emails
@@ -26,17 +25,12 @@ NO_UNCMMN_TLD = 'email@example.education'
 NO_STRT_DOT_LOCAL = '.email@co.com'
 NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 
-@pytest.fixture
-def setup_people():
-    """Fixture to initialize a known state for people_dict before each test."""
-    ppl.people_dict = {
-        ADD_EMAIL: {'name': 'Bob', 'affiliation': 'NYU', 'email': ADD_EMAIL},
-        ppl.DEL_EMAIL: {'name': 'Alice', 'affiliation': 'NYU', 'email': ppl.DEL_EMAIL},
-    }
-    yield  # Run tests
-    # Teardown (reset to empty if needed)
-    ppl.people_dict.clear()
 
+@pytest.fixture(scope='function')
+def temp_person():
+    _id = ppl.create('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
+    yield _id
+    ppl.delete(_id)
 
 def test_is_valid_email_mid_dmn_hypn():
     assert ppl.is_valid_email(MID_DMN_HYPN)
@@ -118,13 +112,6 @@ def test_read():
     for _id, person in people.items():
         assert isinstance(_id, str)
         assert ppl.NAME in person
-
-
-@patch('data.people.read')
-def test_read_mocked_read(mocked_read):
-    mocked_read.return_value = {ADD_EMAIL: {'name': 'Test', 'email': ADD_EMAIL}}
-    people = ppl.read()
-    assert people == {ADD_EMAIL: {'name': 'Test', 'email': ADD_EMAIL}}
 
 
 def test_delete():
