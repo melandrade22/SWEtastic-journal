@@ -38,16 +38,6 @@ def test_journal_title():
     assert resp.status == "200 OK"
 
 
-def test_update_journal_title():
-    new_title = "Journal Title"
-    resp = TEST_CLIENT.put(ep.JOURNAL_EP,json={"title": new_title})
-    assert resp.status =="200 OK"
-    assert resp.json["message"] == "Title updated successfully"
-    resp_get = TEST_CLIENT.get(ep.JOURNAL_EP)
-    resp_json = resp_get.get_json()
-    assert resp_json[ep.JOURNAL_RESP] == new_title
-
-
 def test_read_people():
     resp = TEST_CLIENT.get(ep.PEOPLE_EP)
     resp_json = resp.get_json()
@@ -84,7 +74,7 @@ def test_update_affiliation_endpoint():
 
 def test_add_role():
     email = "aae2042@nyu.edu"
-    role = "editor"
+    role = "ED"
     resp = TEST_CLIENT.put(f'/people/{email}/addRole/{role}')
     assert resp.status == "200 OK"
     person = ppl.get_person(email)
@@ -93,7 +83,7 @@ def test_add_role():
 
 def test_remove_role():
     email = "aae2042@nyu.edu"
-    role = "editor"
+    role = "ED"
     resp = TEST_CLIENT.put(f'/people/{email}/removeRole/{role}')
     assert resp.status == "200 OK"
     person = ppl.get_person(email)
@@ -108,7 +98,7 @@ def test_create_journal_page():
     }
 
     # Send POST request to the create endpoint
-    resp = TEST_CLIENT.post(f'{ep.JOURNAL_EP}/create', json=new_page_data)
+    resp = TEST_CLIENT.post(f'{ep.TXT_EP}/create', json=new_page_data)
     resp_json = resp.get_json()
 
     # Check that the response status is 201 Created

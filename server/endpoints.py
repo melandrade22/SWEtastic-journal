@@ -36,6 +36,7 @@ RETURN = 'return'
 JOURNAL_EP = '/journalTitle'
 JOURNAL_RESP = 'Journal Title'
 TITLE = "SWEtastic-journal"
+TXT_EP = '/text'
 
 
 @api.route(HELLO_EP)
@@ -77,17 +78,6 @@ class JournalTitle(Resource):
         Displays the journal's title
         """
         return {JOURNAL_RESP: TITLE}
-
-    def put(self):
-        """
-        Updates the journal's title
-        """
-        global TITLE
-        title = request.json.get('title')
-        if title:
-            TITLE = title
-            return {"message": "Title updated successfully"}, 200
-        return {"message": "Title required"}, 400
 
 
 @api.route(PEOPLE_EP)
@@ -166,24 +156,34 @@ class PeopleAffiliationUpdate(Resource):
 @api.route('/people/<string:email>/addRole/<string:role>')
 class AddRole(Resource):
     def put(self, email, role):
-        person = ppl.get_person(email)
-        if not person:
-            return {"message": "Person not found"}, 404
-        ppl.add_role(email, role)
+        try:
+            person = ppl.get_person(email)
+        except ValueError:
+            mssg = f"{person} not found, please create the person first"
+            return {"message": mssg}, 404
+        try:
+            ppl.add_role(email, role)
+        except KeyError:
+            return {"message": f"{role} doesn't exist"}, 404
         return {"message": f"Role '{role}' added to {email}"}, 200
 
 
 @api.route('/people/<string:email>/removeRole/<string:role>')
 class RemoveRole(Resource):
     def put(self, email, role):
-        person = ppl.get_person(email)
-        if not person:
-            return {"message": "Person not found"}, 404
-        ppl.remove_role(email, role)
+        try:
+            person = ppl.get_person(email)
+        except ValueError:
+            mssg = f"{person} not found"
+            return {"message": mssg}, 404
+        try:
+            ppl.remove_role(email, role)
+        except KeyError:
+            return {"message": f"{role} doesn't exist"}, 404
         return {"message": f"Role '{role}' removed from {email}"}, 200
 
 
-@api.route(f'{JOURNAL_EP}/pages')  # Get all pages in a journal
+@api.route(f'{TXT_EP}/pages')  # Get all pages in a journal
 class JournalPages(Resource):
     def get(self):
         contents = txt.read()
@@ -191,7 +191,7 @@ class JournalPages(Resource):
 
 
 # Given a journal title and new text value, update that journal's text
-@api.route(f'{JOURNAL_EP}/update/<_key>/<_val>')
+@api.route(f'{TXT_EP}/update/<_key>/<_val>')
 class UpdateJournalText(Resource):
     # Note: _val should be one continguous string
     def put(self, _key, _val):
@@ -212,7 +212,7 @@ PAGE_CREATE_FIELDS = api.model('CreateNewPageEntry', {
 })
 
 
-@api.route(f'{JOURNAL_EP}/create')
+@api.route(f'{TXT_EP}/create')
 class JournalPageCreate(Resource):
     """
     Create a new journal page.

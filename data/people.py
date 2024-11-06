@@ -2,7 +2,7 @@
 module will interface to the user's data
 """
 import re
-# import data.roles as rls
+import data.roles as rls
 
 MIN_USER_NAME_LEN = 2
 # fields
@@ -101,6 +101,8 @@ def read():
 def add_role(email: str, role: str):
     if email not in people_dict:
         raise ValueError(f'Person with {email} not found')
+    if role not in rls.ROLES:
+        raise KeyError(f"The role {role} doesn't exist")
     if role not in people_dict[email][ROLES]:
         people_dict[email][ROLES].append(role)
     return email
@@ -110,6 +112,8 @@ def add_role(email: str, role: str):
 def remove_role(email: str, role: str):
     if email not in people_dict:
         raise ValueError(f'Person with {email} not found')
+    if role not in rls.ROLES:
+        raise KeyError(f"The role {role} doesn't exist")
     if role in people_dict[email][ROLES]:
         people_dict[email][ROLES].remove(role)
     return email
