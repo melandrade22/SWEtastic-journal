@@ -2,6 +2,7 @@
 This module manages person roles for a journal.
 """
 from copy import deepcopy
+import data.people as ppl
 
 AUTHOR_CODE = 'AU'
 TEST_CODE = AUTHOR_CODE
@@ -17,6 +18,7 @@ ROLES = {
     ME_CODE: 'Managing Editor',
     CE_CODE: 'Consulting Editor',
 }
+ROLE_IDX = 'roles'
 
 
 MH_ROLES = [
@@ -41,8 +43,21 @@ def get_masthead_roles() -> dict:
     return mh_roles
 
 
-def update():
-    pass
+def update(_email, _role_code):
+    """
+    _email (str): represents a possible key within dictionary of people
+    _role_code (str): new role we desire to change the existing role to
+    for the person associated with the specified email
+    returns (str) of _email if successful, None if "failed" to update
+    """
+    people = ppl.read()
+    # Verify that the provided _email and  _role_code exists
+    if _email in people and _role_code in get_roles():
+        # Verify we will not override with the same _role_code value
+        if _role_code != people[_email][ROLE_IDX]:
+            people[_email][ROLE_IDX] = _role_code
+            return _email
+    return None
 
 
 def delete():
