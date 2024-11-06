@@ -1,18 +1,52 @@
 """
 This module manages person roles for a journal.
 """
+from copy import deepcopy
+
 AUTHOR_CODE = 'AU'
 TEST_CODE = AUTHOR_CODE
+ED_CODE = 'ED'
+ME_CODE = 'ME'
+CE_CODE = 'CE'
+RE_CODE = 'RE'
 
 ROLES = {
     AUTHOR_CODE: 'Author',
-    'ED': 'Editor',
-    'RE': 'Referee',
+    ED_CODE: 'Editor',
+    RE_CODE: 'Referee',
+    ME_CODE: 'Managing Editor',
+    CE_CODE: 'Consulting Editor',
 }
 
 
+MH_ROLES = [
+    ED_CODE,
+    ME_CODE,
+    CE_CODE,
+]
+
+
 def get_roles() -> dict:
-    return ROLES
+    return deepcopy(ROLES)
+
+
+def get_masthead_roles() -> dict:
+    mh_roles = get_roles()
+    del_mh_roles = []
+    for role in mh_roles:
+        if role not in MH_ROLES:
+            del_mh_roles.append(role)
+    for del_role in del_mh_roles:
+        del mh_roles[del_role]
+    return mh_roles
+
+
+def update():
+    pass
+
+
+def delete():
+    pass
 
 
 def is_valid(code: str) -> bool:
