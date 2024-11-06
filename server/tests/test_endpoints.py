@@ -19,6 +19,10 @@ import server.endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
 NEW_AFFILIATION = "NewAffiliation"
+TEST_NAME = "First_Name Last_Name"
+TEST_AFFILIATION = "TestAffiliation"
+TEST_EMAIL = "TestDummy@email.com"
+TEST_ROLE = "TestRole"
 
 
 def test_hello():
@@ -104,3 +108,11 @@ def test_create_journal_page():
     # Check that the response status is 201 Created
     assert resp.status_code == 201, "Expected status code 201 Created"
     assert resp_json["message"] == "Page created successfully"
+
+@pytest.fixture(scope="function")
+def mock_person():  # create a test dummy person object
+    dummy = ppl.create(TEST_NAME, TEST_AFFILIATION, TEST_EMAIL, TEST_ROLE)
+    yield dummy
+    ppl.delete(dummy)
+
+
