@@ -235,3 +235,21 @@ class JournalPageCreate(Resource):
         except Exception as e:
             return {"message":
                     f"Failed to create page: {e}"}, HTTPStatus.BAD_REQUEST
+
+
+@api.route(f'{TXT_EP}/delete/<string:key>')
+class DeleteJournalPage(Resource):
+    """
+    This class handles deleting a journal page by its key.
+    """
+    @api.response(HTTPStatus.OK, 'Page deleted successfully')
+    @api.response(HTTPStatus.NOT_FOUND, 'No page found with this key')
+    def delete(self, key):
+        """
+        Delete a journal page by its key.
+        """
+        result = txt.delete(key)
+        if "Deleted" in result:
+            return {"message": result}, HTTPStatus.OK
+        else:
+            raise wz.NotFound(result)
