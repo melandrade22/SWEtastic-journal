@@ -116,3 +116,31 @@ def mock_person():  # create a test dummy person object
     ppl.delete(dummy)
 
 
+TEST_CLIENT = ep.app.test_client()
+
+@patch('data.people.read', autospec=True, return_value={
+    'sample_id': {NAME: 'Alice Example'},
+    'another_id': {NAME: 'Bob Test'}
+})
+def test_read_people(mock_read):
+    # Send GET request to the people endpoint
+    resp = TEST_CLIENT.get(ep.PEOPLE_EP)
+    
+    # Ensure the response status is 200 OK
+    assert resp.status_code == OK
+    
+    # Parse the JSON response
+    resp_json = resp.get_json()
+    
+    # Validate keys and names in the response
+    for person_id, person in resp_json.items():
+        print(f'Checking person: {person_id}, data: {person}')
+        assert isinstance(person_id, str)
+        assert len(person_id) > 0
+        assert NAME in person
+        assert isinstance(person[NAME], str)
+        assert len(person[NAME]) > 3  # Check name length is realistic
+
+    # Additional assertion to check a specific name, if needed
+    assert 'sample_id' in resp_json
+    assert resp_json['sample_id'][NAME] == 'Alice Example'
