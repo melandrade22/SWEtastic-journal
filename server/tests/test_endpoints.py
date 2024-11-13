@@ -116,6 +116,19 @@ def mock_person():  # create a test dummy person object
     ppl.delete(dummy)
 
 
+def test_delete_journal_page():
+    page_key_to_delete = "testPageKey"
+
+    # send delete request directly with the key in the URL - specifies what journal page to delete by key
+    resp = TEST_CLIENT.delete(f'{ep.TXT_EP}/delete/{page_key_to_delete}')
+    resp_json = resp.get_json()
+
+    # check that the response status is 200 and page is deleted
+    assert resp.status_code == 200, "Expected status code 200 indicating successful deletion"
+    assert resp_json["message"] == f"Deleted page with key: {page_key_to_delete}", "Unexpected success message in response"
+
+
+
 TEST_CLIENT = ep.app.test_client()
 
 @patch('data.people.read', autospec=True, return_value={
