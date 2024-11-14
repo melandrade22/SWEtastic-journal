@@ -100,6 +100,22 @@ PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {
 })
 
 
+class Person(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting journal people.
+    """
+    def get(self, _id):
+        """
+        Retrieve a journal person.
+        """
+        person = ppl.read_one(_id)
+        if person:
+            return person
+        else:
+            raise wz.NotFound(f'No such record: {_id}')
+
+
 @api.route(f'{PEOPLE_EP}/create')
 class PeopleCreate(Resource):
     """

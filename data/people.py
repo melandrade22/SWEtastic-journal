@@ -97,6 +97,14 @@ def read():
     return people
 
 
+def read_one(email: str) -> dict:
+    """
+    Return a person record if email present in DB,
+    else None.
+    """
+    return people_dict.get(email)
+
+
 # New function to add a role to an existing person
 def add_role(email: str, role: str):
     if email not in people_dict:
