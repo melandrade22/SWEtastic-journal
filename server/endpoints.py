@@ -163,8 +163,9 @@ class AddRole(Resource):
             return {"message": mssg}, 404
         try:
             ppl.add_role(email, role)
-        except KeyError:
-            return {"message": f"{role} doesn't exist"}, 404
+        except KeyError as err:
+            raise wz.NotFound(str(err))
+            # return {"message": str(err)}, 404
         return {"message": f"Role '{role}' added to {email}"}, 200
 
 

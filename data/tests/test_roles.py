@@ -23,3 +23,12 @@ def test_get_role_codes():
 
 def test_is_valid():
     assert rls.is_valid(rls.TEST_CODE)
+
+
+def test_delete():
+    rls_before = rls.get_roles()
+    original_length = len(rls_before)
+    rls.delete_rl_in_dict(rls.CE_CODE)
+    rls_after = rls.get_roles()
+    assert len(rls_after) == original_length - 1, "The number of people did not decrease!"
+    assert rls.CE_CODE not in rls_after

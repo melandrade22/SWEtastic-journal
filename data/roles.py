@@ -60,8 +60,16 @@ def update(_email, _role_code):
     return None
 
 
-def delete():
-    pass
+def delete_rl_in_dict(_role_code):
+    """
+    Deleting roles from the ROLES dictionary
+    """
+    roles = ROLES
+    if _role_code in roles:
+        del roles[_role_code]
+        return _role_code
+    else:
+        return None
 
 
 def is_valid(code: str) -> bool:
