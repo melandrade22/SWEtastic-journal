@@ -97,6 +97,14 @@ def read():
     return people
 
 
+def read_one(email: str) -> dict:
+    """
+    Return a person record if email present in DB,
+    else None.
+    """
+    return people_dict.get(email)
+
+
 # New function to add a role to an existing person
 def add_role(email: str, role: str):
     if email not in people_dict:
@@ -155,3 +163,17 @@ def get_person(email: str):
         return people_dict[email]
     else:
         raise ValueError(f'Person with {email} not found')
+
+
+def get_masthead():
+    masthead = {}
+    mh_roles = rls.get_masthead_roles()
+    for mh_role, text in mh_roles.items():
+        people_w_role = {}  # Map a person to a list of their roles
+        for person in read():
+            if has_role(person, mh_role):
+                # Put their record in people_w_role
+                people_w_role[person] = (people_w_role.get(person, []))
+                people_w_role[person].append(mh_role)
+        masthead[text] = people_w_role
+    return masthead

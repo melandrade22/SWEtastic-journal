@@ -48,7 +48,7 @@ def update(_email, _role_code):
     _email (str): represents a possible key within dictionary of people
     _role_code (str): new role we desire to change the existing role to
     for the person associated with the specified email
-    returns (str) of _email if successful, None if "failed" to update
+    returns (str) of _email if successful, None if "failed"
     """
     people = ppl.read()
     # Verify that the provided _email and  _role_code exists
@@ -78,6 +78,11 @@ def is_valid(code: str) -> bool:
 
 def get_role_codes() -> list:
     return list(ROLES.keys())
+
+
+def test_get_masthead():
+    mh = ppl.get_masthead()
+    assert isinstance(mh, dict)
 
 
 def main():

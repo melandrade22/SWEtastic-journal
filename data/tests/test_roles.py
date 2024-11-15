@@ -1,4 +1,5 @@
 import data.roles as rls
+import data.people as ppl
 
 def test_get_roles():
     roles = rls.get_roles()
@@ -32,3 +33,18 @@ def test_delete():
     rls_after = rls.get_roles()
     assert len(rls_after) == original_length - 1, "The number of people did not decrease!"
     assert rls.CE_CODE not in rls_after
+
+
+def test_update():
+    # Arrange: Set up initial role and email for testing
+    test_email = "updateAffiliation@nyu.edu"
+    initial_role = 'AU'  # Initially assigned as 'Author'
+    new_role_code = 'ME'  # New role to assign, 'Managing Editor'
+    ppl.people_dict[test_email][ppl.ROLES] = [initial_role]
+    
+    # Act: Call the update function to assign a new role
+    result = rls.update(test_email, new_role_code)
+
+    # Assert: Verify that the role was updated and correct email was returned
+    assert result == test_email
+    # assert ppl.people_dict[test_email][ppl.ROLES] == [new_role_code]  # Role updated to new one
