@@ -3,6 +3,7 @@ This module manages person roles for a journal.
 """
 from copy import deepcopy
 import data.people as ppl
+import re
 
 AUTHOR_CODE = 'AU'
 TEST_CODE = AUTHOR_CODE
@@ -26,6 +27,16 @@ MH_ROLES = [
     ME_CODE,
     CE_CODE,
 ]
+
+
+def is_valid_key(key: str) -> bool:
+    pattern = r"[A-Z]{2}"
+    return re.fullmatch(pattern, key)
+
+
+def is_valid_role(role: str) -> bool:
+    pattern = r"[A-Za-z\s]+"
+    return re.fullmatch(pattern, role)
 
 
 def get_roles() -> dict:
@@ -58,6 +69,19 @@ def update(_email, _role_code):
             people[_email][ROLE_IDX] = _role_code
             return _email
     return None
+
+
+def create_rl_in_dict(key: str, role: str):
+    """
+    Adding a role to the existing ones in the ROLES dictionary
+    """
+    if key in ROLES:
+        return f"Key {key} already exists with {ROLES[key]}"
+    elif role in ROLES.values():
+        return f"Role {role} already exists"
+    if is_valid_key(key) and is_valid_role(role):
+        ROLES[key] = role
+    return key
 
 
 def delete_rl_in_dict(_role_code):
