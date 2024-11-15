@@ -165,6 +165,20 @@ def get_person(email: str):
         raise ValueError(f'Person with {email} not found')
 
 
+MH_FIELDS = [NAME, AFFILIATION]
+
+
+def get_mh_fields(journal_code=None) -> list:
+    return MH_FIELDS
+
+
+def create_mh_rec(person: dict) -> dict:
+    mh_rec = {}
+    for field in get_mh_fields():
+        mh_rec[field] = person.get(field, '')
+    return mh_rec
+
+
 def get_masthead():
     masthead = {}
     mh_roles = rls.get_masthead_roles()
