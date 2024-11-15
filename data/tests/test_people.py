@@ -153,3 +153,22 @@ VALID_ROLES = ['ED', 'AU']
 @pytest.mark.skip('Skipping cause not done.')
 def test_update(temp_person):
     ppl.update('Vivian Hertz', 'UMD', temp_person, VALID_ROLES)
+
+
+def test_get_mh_fields():
+    flds = ppl.get_mh_fields()
+    assert isinstance(flds, list)
+    assert len(flds) > 0
+
+
+# def test_create_mh_rec(temp_person):
+#     person_rec = ppl.read_one(temp_person)
+#     mh_rec = ppl.create_mh_rec(person_rec)
+#     assert isinstance(mh_rec, dict)
+#     for field in ppl.MH_FIELDS:
+#         assert field in mh_rec
+
+
+# def test_get_masthead():
+#     mh = ppl.get_masthead()
+#     assert isinstance(mh, dict)
