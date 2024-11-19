@@ -2,8 +2,14 @@
 module will interface to the user's data
 """
 import re
+import data.db_connect as dbc
 import data.roles as rls
 
+# Make the connection
+client = dbc.connect_db()
+print(f"{client=}")
+
+PEOPLE_COLLECT = 'people'
 MIN_USER_NAME_LEN = 2
 # fields
 NAME = 'name'
@@ -68,22 +74,29 @@ def is_valid_email(email: str) -> bool:
 
 def is_valid_person(name: str, affiliation: str, email: str,
                     roles: str) -> bool:
+    valid = True
     if email in people_dict:
+        valid = False
         raise ValueError(f'Adding duplicate {email=}')
     if not is_valid_email(email):
+        valid = False
         raise ValueError(f'Invalid email: {email}')
     # if not rls.is_valid(roles):
     #     raise ValueError(f'Invalid role: {roles}')
-    return True
+    return valid
 
 
 def create(name: str, affiliation: str, email: str, roles=None):
     if roles is None:
         roles = []
     if is_valid_person(name, affiliation, email, roles):
+
         people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                               EMAIL: email, ROLES: roles}
-        return email
+        dbc.insert_one(PEOPLE_COLLECT, people_dict[email])
+        print("Value added:", people_dict[email])
+        return people_dict[email]
+    return None
 
 
 def read():

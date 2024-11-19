@@ -5,7 +5,7 @@ import pymongo as pm
 LOCAL = "0"
 CLOUD = "1"
 
-GAME_DB = 'gamesDB'
+SE_DB = 'seDB'
 
 client = None
 
@@ -34,48 +34,52 @@ def connect_db():
                                     + '?retryWrites=true&w=majority')
         else:
             print("Connecting to Mongo locally.")
-            client = pm.MongoClient()
+            client = pm.MongoClient("mongodb://localhost:27017/")
+    return client
 
 
-def insert_one(collection, doc, db=GAME_DB):
+def insert_one(collection, doc, db=SE_DB):
     """
     Insert a single doc into collection.
     """
     print(f'{db=}')
-    return client[db][collection].insert_one(doc)
+    res = client[db][collection].insert_one(doc)
+    if MONGO_ID in doc:  # To avoid serialization issues with ObjectId
+        doc[MONGO_ID] = str(doc[MONGO_ID])
+    return res
 
 
-def fetch_one(collection, filt, db=GAME_DB):
-    """
-    Find with a filter and return on the first doc found.
-    Return None if not found.
-    """
-    for doc in client[db][collection].find(filt):
-        if MONGO_ID in doc:
-            # Convert mongo ID to a string so it works as JSON
-            doc[MONGO_ID] = str(doc[MONGO_ID])
-        return doc
-
-
-def del_one(collection, filt, db=GAME_DB):
+def del_one(collection, filt, db=SE_DB):
     """
     Find with a filter and return on the first doc found.
     """
     client[db][collection].delete_one(filt)
 
 
-def update_doc(collection, filters, update_dict, db=GAME_DB):
+def update_doc(collection, filters, update_dict, db=SE_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
 
-def fetch_all(collection, db=GAME_DB):
+def read(collection, db=SE_DB, no_id=True) -> list:
+    """
+    Returns a list from the db.
+    """
+    ret = []
+    for doc in client[db][collection].find():
+        if no_id:
+            del doc[MONGO_ID]
+        ret.append(doc)
+    return ret
+
+
+def fetch_all(collection, db=SE_DB):
     ret = []
     for doc in client[db][collection].find():
         ret.append(doc)
     return ret
 
 
-def fetch_all_as_dict(key, collection, db=GAME_DB):
+def fetch_all_as_dict(key, collection, db=SE_DB):
     ret = {}
     for doc in client[db][collection].find():
         del doc[MONGO_ID]
