@@ -60,6 +60,18 @@ def update_doc(collection, filters, update_dict, db=SE_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
 
+def fetch_one(collection, filt, db=SE_DB):
+    """
+    Find with a filter and return on the first doc found.
+    Return None if not found.
+    """
+    for doc in client[db][collection].find(filt):
+        if MONGO_ID in doc:
+            # Convert mongo ID to a string so it works as JSON
+            doc[MONGO_ID] = str(doc[MONGO_ID])
+        return doc
+
+
 def read(collection, db=SE_DB, no_id=True) -> list:
     """
     Returns a list from the db.
