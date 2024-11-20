@@ -73,7 +73,7 @@ def is_valid_email(email: str) -> bool:
 
 
 def is_valid_person(name: str, affiliation: str, email: str,
-                    roles: str) -> bool:
+                    role: str = None, roles: str = None) -> bool:
     valid = True
     if email in people_dict:
         valid = False
@@ -81,15 +81,21 @@ def is_valid_person(name: str, affiliation: str, email: str,
     if not is_valid_email(email):
         valid = False
         raise ValueError(f'Invalid email: {email}')
-    # if not rls.is_valid(roles):
-    #     raise ValueError(f'Invalid role: {roles}')
+    if role:
+        if not rls.is_valid(role):
+            raise ValueError(f'Invalid role: {role}')
+    elif roles:
+        for role in roles:
+            if not rls.is_valid(role):
+                raise ValueError(f"Invalid role: {role}")
     return valid
 
 
-def create(name: str, affiliation: str, email: str, roles=None):
-    if roles is None:
+def create(name: str, affiliation: str, email: str, role: str):
+    if is_valid_person(name, affiliation, email, role):
         roles = []
-    if is_valid_person(name, affiliation, email, roles):
+        if role:
+            roles.append(role)
 
         people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                               EMAIL: email, ROLES: roles}
@@ -140,11 +146,11 @@ def remove_role(email: str, role: str):
     return email
 
 
-def delete(_id):
+def delete(email: str):
     people = read()
-    if _id in people:
-        del people[_id]
-        return _id
+    if email in people:
+        del people[email]
+        return email
     else:
         return None
 

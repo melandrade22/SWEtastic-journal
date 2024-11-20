@@ -104,13 +104,9 @@ def get_role_codes() -> list:
     return list(ROLES.keys())
 
 
-def test_get_masthead():
-    mh = ppl.get_masthead()
-    assert isinstance(mh, dict)
-
-
 def main():
     print(get_roles())
+    print(get_masthead_roles())
 
 
 if __name__ == '__main__':
