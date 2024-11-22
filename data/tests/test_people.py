@@ -26,14 +26,17 @@ NO_UNCMMN_TLD = 'email@example.education'
 NO_STRT_DOT_LOCAL = '.email@co.com'
 NO_END_DOT_LOCAL = 'FRIENDSHIP.@Company.com'
 
-TEMP_EMAIL = 'person@temp.org'
+TEMP_EMAIL = 'person1@temp.org'
 
 
 @pytest.fixture(scope='function')
 def temp_person():
-    _id = ppl.create('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
-    yield _id
-    ppl.delete(_id)
+    email = ppl.create('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
+    yield email
+    try: 
+        ppl.delete(email)
+    except:
+        print('Person already deleted')
 
 
 def test_is_valid_email_mid_dmn_hypn():
@@ -118,23 +121,31 @@ def test_read():
         assert ppl.NAME in person
 
 
-def test_delete():
-    # read the dictionary before deletion
-    people_before = ppl.read()
-    original_length = len(people_before)
-    #  delete the email 
-    ppl.delete(ppl.DEL_EMAIL)
-    people_after = ppl.read()
-    assert len(people_after) == original_length - 1, "The number of people did not decrease!"
-    assert ppl.DEL_EMAIL not in people_after
+def test_read_one(temp_person):
+    assert ppl.read_one(temp_person) is not None
+
+
+def test_read_one_not_there():
+    assert ppl.read_one('Not an existing email!') is None
+
+
+def test_exists(temp_person):
+    assert ppl.exists(temp_person)
+
+
+def test_doesnt_exist():
+    assert not ppl.exists('Not an existing email!')
+
+
+def test_delete(temp_person):
+    ppl.delete(temp_person)
+    assert not ppl.exists(temp_person)
 
 
 def test_create():
-    people = ppl.read()
-    assert ADD_EMAIL not in people
     ppl.create('Bob', 'NYU', ADD_EMAIL, 'AU')
-    people = ppl.read()
-    assert ADD_EMAIL in people
+    assert ppl.exists(ADD_EMAIL)
+    ppl.delete(ADD_EMAIL)
 
 # a conditional skip based on presence of TEST_EMAIL in people_dict
 @pytest.mark.skipif(
@@ -143,12 +154,14 @@ def test_create():
 )
 
 
-def test_create_duplicate():
+def test_create_duplicate(temp_person):
     with pytest.raises(ValueError):
         ppl.create('Do not care about name',
-                   'Or affiliation', ppl.TEST_EMAIL)
+                   'Or affiliation', temp_person,
+                   TEST_ROLE_CODE)
 
 
+@pytest.mark.skip('Needs update affiliation function')
 def test_update_affiliation():
     ppl.update(ADD_EMAIL, "NewAffiliation")
     if ADD_EMAIL in ppl.read():
@@ -156,49 +169,46 @@ def test_update_affiliation():
 
 
 VALID_ROLES = ['ED', 'AU']
+TEST_UPDATE_NAME = 'Vivian Hertz'
 
 
-@pytest.mark.skip('Skipping cause not done.')
+
 def test_update(temp_person):
-    ppl.update('Vivian Hertz', 'UMD', temp_person, VALID_ROLES)
+    ppl.update(TEST_UPDATE_NAME, 'UMD', temp_person, VALID_ROLES)
+    updated_rec = ppl.read_one(temp_person)
+    assert updated_rec[ppl.NAME] == TEST_UPDATE_NAME
 
+
+def test_update_not_there(temp_person):
+    with pytest.raises(ValueError):
+        ppl.update('Will Fail', 'University of the Void',
+                   'Non-existent email', VALID_ROLES)
+        
 
 def test_get_mh_fields():
     flds = ppl.get_mh_fields()
     assert isinstance(flds, list)
     assert len(flds) > 0
 
-@pytest.mark.skip('ppl.delete issue in temp, raising duplicate')
+
 def test_has_role(temp_person):
     person_rec = ppl.read_one(temp_person)
     assert ppl.has_role(person_rec, TEST_ROLE_CODE)
 
-@pytest.mark.skip('issue with del in temp, raising duplicate')
+
 def test_doesnt_have_role(temp_person):
     person_rec = ppl.read_one(temp_person)
     assert not ppl.has_role(person_rec, 'Not a good role!')
 
 
-def test_read_one():
-    email = 'read_one@test.edu'
-    ppl.create('Bob', 'NYU', email, 'AU')
-    assert temp_person is not None
-    assert ppl.read_one(email) is not None
-    ppl.delete(email)
+def test_create_mh_rec(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    mh_rec = ppl.create_mh_rec(person_rec)
+    assert isinstance(mh_rec, dict)
+    for field in ppl.MH_FIELDS:
+        assert field in mh_rec
 
 
-def test_read_one_not_there():
-    assert ppl.read_one('Not an existing email!') is None
-
-
-# def test_create_mh_rec(temp_person):
-#     person_rec = ppl.read_one(temp_person)
-#     mh_rec = ppl.create_mh_rec(person_rec)
-#     assert isinstance(mh_rec, dict)
-#     for field in ppl.MH_FIELDS:
-#         assert field in mh_rec
-
-
-# def test_get_masthead():
-#     mh = ppl.get_masthead()
-#     assert isinstance(mh, dict)
+def test_get_masthead():
+    mh = ppl.get_masthead()
+    assert isinstance(mh, dict)

@@ -38,14 +38,19 @@ def connect_db():
     return client
 
 
+def convert_mongo_id(doc: dict):
+    if MONGO_ID in doc:
+        # Convert mongo ID to a string so it works as JSON
+        doc[MONGO_ID] = str(doc[MONGO_ID])
+
+
 def insert_one(collection, doc, db=SE_DB):
     """
     Insert a single doc into collection.
     """
     print(f'{db=}')
     res = client[db][collection].insert_one(doc)
-    if MONGO_ID in doc:  # To avoid serialization issues with ObjectId
-        doc[MONGO_ID] = str(doc[MONGO_ID])
+    convert_mongo_id(doc)
     return res
 
 
@@ -53,22 +58,22 @@ def del_one(collection, filt, db=SE_DB):
     """
     Find with a filter and return on the first doc found.
     """
-    client[db][collection].delete_one(filt)
+    print(f'{filt=}')
+    del_result = client[db][collection].delete_one(filt)
+    return del_result.deleted_count
 
 
-def update_doc(collection, filters, update_dict, db=SE_DB):
+def update(collection, filters, update_dict, db=SE_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
 
-def fetch_one(collection, filt, db=SE_DB):
+def read_one(collection, filt, db=SE_DB):
     """
     Find with a filter and return on the first doc found.
     Return None if not found.
     """
     for doc in client[db][collection].find(filt):
-        if MONGO_ID in doc:
-            # Convert mongo ID to a string so it works as JSON
-            doc[MONGO_ID] = str(doc[MONGO_ID])
+        convert_mongo_id(doc)
         return doc
 
 
@@ -80,8 +85,18 @@ def read(collection, db=SE_DB, no_id=True) -> list:
     for doc in client[db][collection].find():
         if no_id:
             del doc[MONGO_ID]
+        else:
+            convert_mongo_id(doc)
         ret.append(doc)
     return ret
+
+
+def read_dict(collection, key, db=SE_DB, no_id=True) -> dict:
+    recs = read(collection, db=db, no_id=no_id)
+    recs_as_dict = {}
+    for rec in recs:
+        recs_as_dict[rec[key]] = rec
+    return recs_as_dict
 
 
 def fetch_all(collection, db=SE_DB):

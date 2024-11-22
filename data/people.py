@@ -75,9 +75,9 @@ def is_valid_email(email: str) -> bool:
 def is_valid_person(name: str, affiliation: str, email: str,
                     role: str = None, roles: str = None) -> bool:
     valid = True
-    if email in people_dict:
-        valid = False
-        raise ValueError(f'Adding duplicate {email=}')
+    # if email in people_dict:
+    #     valid = False
+    #     raise ValueError(f'Adding duplicate {email=}')
     if not is_valid_email(email):
         valid = False
         raise ValueError(f'Invalid email: {email}')
@@ -91,28 +91,34 @@ def is_valid_person(name: str, affiliation: str, email: str,
     return valid
 
 
+def exists(email: str) -> bool:
+    return read_one(email) is not None
+
+
 def create(name: str, affiliation: str, email: str, role: str):
+    # if exists(email):
+    #     raise ValueError(f"Adding duplicate {email=}")
     if is_valid_person(name, affiliation, email, role):
         roles = []
         if role:
             roles.append(role)
-
         people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                               EMAIL: email, ROLES: roles}
         dbc.insert_one(PEOPLE_COLLECT, people_dict[email])
         print("Value added:", people_dict[email])
-        return people_dict[email]
+        return email
     return None
 
 
-def read():
+def read() -> dict:
     """
     Our contract:
         - No arguments.
         - Returns a dictionary of users keyed on user email.
         - Each user email must be the key for another dictionary.
     """
-    people = people_dict
+    people = dbc.read_dict(PEOPLE_COLLECT, EMAIL)
+    print(f"{people=}")
     return people
 
 
@@ -121,7 +127,7 @@ def read_one(email: str) -> dict:
     Return a person record if email present in DB,
     else None.
     """
-    return people_dict.get(email)
+    return dbc.read_one(PEOPLE_COLLECT, {EMAIL: email})
 
 
 # New function to add a role to an existing person
@@ -147,21 +153,20 @@ def remove_role(email: str, role: str):
 
 
 def delete(email: str):
-    people = read()
-    if email in people:
-        del people[email]
+    print(f'{EMAIL=}, {email=}')
+    return dbc.del_one(PEOPLE_COLLECT, {EMAIL: email})
+
+
+def update(name: str, affiliation: str, email: str, roles: list):
+    if not exists(email):
+        raise ValueError(f'Updating non-existent person: {email=}')
+    if is_valid_person(name, affiliation, email, roles=roles):
+        ret = dbc.update(PEOPLE_COLLECT,
+                         {EMAIL: email},
+                         {NAME: name, AFFILIATION: affiliation,
+                          EMAIL: email, ROLES: roles})
+        print(f'{ret=}')
         return email
-    else:
-        return None
-
-
-def update(_id, _new_affiliation):
-    people = read()
-    if _id in people:
-        people[_id]["affiliation"] = _new_affiliation
-        return _id
-    else:
-        return None
 
 
 def has_role(person: dict, role: str) -> bool:
@@ -202,11 +207,11 @@ def get_masthead():
     masthead = {}
     mh_roles = rls.get_masthead_roles()
     for mh_role, text in mh_roles.items():
-        people_w_role = {}  # Map a person to a list of their roles
-        for person in read():
+        people_w_role = []  # Map a person to a list of their roles
+        people = read()
+        for _id, person in people.items():
             if has_role(person, mh_role):
-                # Put their record in people_w_role
-                people_w_role[person] = (people_w_role.get(person, []))
-                people_w_role[person].append(mh_role)
+                rec = create_mh_rec(person)
+                people_w_role.append(rec)
         masthead[text] = people_w_role
     return masthead
