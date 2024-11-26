@@ -147,11 +147,11 @@ def test_create():
     assert ppl.exists(ADD_EMAIL)
     ppl.delete(ADD_EMAIL)
 
-# a conditional skip based on presence of TEST_EMAIL in people_dict
-@pytest.mark.skipif(
-    ppl.TEST_EMAIL in ppl.people_dict,
-    reason="Skipping because TEST_EMAIL already exists in people_dict."
-)
+# # a conditional skip based on presence of TEST_EMAIL in people_dict
+# @pytest.mark.skipif(
+#     ppl.TEST_EMAIL in ppl.people_dict,
+#     reason="Skipping because TEST_EMAIL already exists in people_dict."
+# )
 
 
 def test_create_duplicate(temp_person):
@@ -161,11 +161,10 @@ def test_create_duplicate(temp_person):
                    TEST_ROLE_CODE)
 
 
-@pytest.mark.skip('Needs update affiliation function')
-def test_update_affiliation():
-    ppl.update(ADD_EMAIL, "NewAffiliation")
-    if ADD_EMAIL in ppl.read():
-        assert ppl.read()[ADD_EMAIL]["affiliation"] == "NewAffiliation"
+def test_update_affiliation(temp_person):
+    ppl.update_affiliation(temp_person, "NewAffiliation")
+    if temp_person in ppl.read():
+        assert ppl.read()[temp_person]["affiliation"] == "NewAffiliation"
 
 
 VALID_ROLES = ['ED', 'AU']

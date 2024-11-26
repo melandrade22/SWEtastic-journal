@@ -22,7 +22,7 @@ NEW_AFFILIATION = "NewAffiliation"
 TEST_NAME = "First_Name Last_Name"
 TEST_AFFILIATION = "TestAffiliation"
 TEST_EMAIL = "TestDummy@email.com"
-TEST_ROLE = "TestRole"
+TEST_ROLE = "AU"
 
 
 @pytest.fixture(scope="function")
@@ -58,7 +58,6 @@ def test_read_people():
         assert NAME in person
 
 
-@pytest.mark.skip('Needs debugging')
 def test_delete(mock_person):
     # read the dictionary before deletion
     people_before = ppl.read()
@@ -78,12 +77,13 @@ def test_delete(mock_person):
     assert ppl.DEL_EMAIL not in people_after
 
 
-@pytest.mark.skip('Needs update affiliation function')
-def test_update_affiliation_endpoint():
+def test_update_affiliation_endpoint(mock_person):
     new_affiliation = "New Affiliation"
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/updateAffiliation/{ppl.UPDATE_EMAIL}/{new_affiliation}')
-    assert resp.json["return"] == 200
-    
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/updateAffiliation/{mock_person}/{new_affiliation}')
+    print(f"Response JSON: {resp.json}") 
+    print(f"Response Status Code: {resp.status_code}")
+    assert resp.status == "200 OK"
+
 
 def test_add_role():
     email = "aae2042@nyu.edu"

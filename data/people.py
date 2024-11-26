@@ -74,12 +74,7 @@ def is_valid_email(email: str) -> bool:
 
 def is_valid_person(name: str, affiliation: str, email: str,
                     role: str = None, roles: str = None) -> bool:
-    valid = True
-    # if email in people_dict:
-    #     valid = False
-    #     raise ValueError(f'Adding duplicate {email=}')
     if not is_valid_email(email):
-        valid = False
         raise ValueError(f'Invalid email: {email}')
     if role:
         if not rls.is_valid(role):
@@ -88,7 +83,7 @@ def is_valid_person(name: str, affiliation: str, email: str,
         for role in roles:
             if not rls.is_valid(role):
                 raise ValueError(f"Invalid role: {role}")
-    return valid
+    return True
 
 
 def exists(email: str) -> bool:
@@ -96,8 +91,8 @@ def exists(email: str) -> bool:
 
 
 def create(name: str, affiliation: str, email: str, role: str):
-    # if exists(email):
-    #     raise ValueError(f"Adding duplicate {email=}")
+    if exists(email):
+        raise ValueError(f"Adding duplicate {email=}")
     if is_valid_person(name, affiliation, email, role):
         roles = []
         if role:
@@ -167,6 +162,16 @@ def update(name: str, affiliation: str, email: str, roles: list):
                           EMAIL: email, ROLES: roles})
         print(f'{ret=}')
         return email
+
+
+def update_affiliation(email: str, affiliation: str):
+    if not exists(email):
+        raise ValueError(f'Updating non-existent person: {email=}')
+    ret = dbc.update(PEOPLE_COLLECT,
+                     {EMAIL: email},
+                     {AFFILIATION: affiliation})
+    print(f'{ret=}')
+    return email
 
 
 def has_role(person: dict, role: str) -> bool:

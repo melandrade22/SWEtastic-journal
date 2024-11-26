@@ -154,30 +154,29 @@ class PeopleCreate(Resource):
         }
 
 
-@api.route(f'{PEOPLE_EP}/updateAffiliation/<_id>/<_new_affiliation>')
+@api.route(f'{PEOPLE_EP}/updateAffiliation/<email>/<new_affiliation>')
 class PeopleAffiliationUpdate(Resource):
     """
-    Update a person's affiliation given their _id and the _new_affiliation
+    Update a person's affiliation given their email and the _new_affiliation
     """
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
-    def put(self, _id, _new_affiliation):
+    def put(self, email, new_affiliation):
         """
         Update an affiliation
         """
         try:
-            ret = ppl.update(_id, _new_affiliation)
+            ret = ppl.update_affiliation(email, new_affiliation)
         except Exception as err:
             raise wz.NotAcceptable(f'Error updating affiliation {err}')
         if ret:
-            msg = 'This affiliation has been successfully updated!'
-            ret = 200
+            msg = f'Affiliation has been updated to {new_affiliation}!'
         else:
             msg = "Failed to update affiliation"
-            ret = 404
         return {
-            MESSAGE: msg,
-            RETURN: ret,
+            'EMAIL': ret,
+            MESSAGE: msg
+
         }
 
 
@@ -193,7 +192,6 @@ class AddRole(Resource):
             ppl.add_role(email, role)
         except KeyError as err:
             raise wz.NotFound(str(err))
-            # return {"message": str(err)}, 404
         return {"message": f"Role '{role}' added to {email}"}, 200
 
 
