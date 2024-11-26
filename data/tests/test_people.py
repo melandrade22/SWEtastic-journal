@@ -111,7 +111,7 @@ def test_is_valid_email_no_end_dot_local():
     assert not ppl.is_valid_email(NO_END_DOT_LOCAL)
 
 
-def test_read():
+def test_read(temp_person):
     people = ppl.read()
     assert isinstance(people, dict)
     assert len(people) > 0
@@ -172,14 +172,13 @@ VALID_ROLES = ['ED', 'AU']
 TEST_UPDATE_NAME = 'Vivian Hertz'
 
 
-
 def test_update(temp_person):
     ppl.update(TEST_UPDATE_NAME, 'UMD', temp_person, VALID_ROLES)
     updated_rec = ppl.read_one(temp_person)
     assert updated_rec[ppl.NAME] == TEST_UPDATE_NAME
 
 
-def test_update_not_there(temp_person):
+def test_update_not_there():
     with pytest.raises(ValueError):
         ppl.update('Will Fail', 'University of the Void',
                    'Non-existent email', VALID_ROLES)
