@@ -127,23 +127,27 @@ def read_one(email: str) -> dict:
 
 # New function to add a role to an existing person
 def add_role(email: str, role: str):
-    if email not in people_dict:
+    if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
         raise KeyError(f"The role {role} doesn't exist")
-    if role not in people_dict[email][ROLES]:
-        people_dict[email][ROLES].append(role)
+    person_roles = read_one(email)[ROLES]
+    if role not in person_roles:
+        person_roles.append(role)
+        update_roles(email, person_roles)
     return email
 
 
 # New function to remove a role from an existing person
 def remove_role(email: str, role: str):
-    if email not in people_dict:
+    if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
         raise KeyError(f"The role {role} doesn't exist")
-    if role in people_dict[email][ROLES]:
-        people_dict[email][ROLES].remove(role)
+    person_roles = read_one(email)[ROLES]
+    if role in person_roles:
+        person_roles.remove(role)
+        update_roles(email, person_roles)
     return email
 
 
@@ -174,24 +178,30 @@ def update_affiliation(email: str, affiliation: str):
     return email
 
 
+def update_name(email: str, name: str):
+    if not exists(email):
+        raise ValueError(f'Updating non-existent person: {email=}')
+    ret = dbc.update(PEOPLE_COLLECT,
+                     {EMAIL: email},
+                     {NAME: name})
+    print(f'{ret=}')
+    return email
+
+
+def update_roles(email: str, roles: list):
+    if not exists(email):
+        raise ValueError(f'Updating non-existent person: {email=}')
+    ret = dbc.update(PEOPLE_COLLECT,
+                     {EMAIL: email},
+                     {ROLES: roles})
+    print(f'{ret=}')
+    return email
+
+
 def has_role(person: dict, role: str) -> bool:
     if role in person.get(ROLES):
         return True
     return False
-
-
-def get_person(email: str):
-    """
-    Retrieve a person by their email.
-    Args:
-        email: The email of the person to retrieve.
-    Returns:
-        The person's data as a dictionary if found, else raises a ValueError.
-    """
-    if email in people_dict:
-        return people_dict[email]
-    else:
-        raise ValueError(f'Person with {email} not found')
 
 
 MH_FIELDS = [NAME, AFFILIATION]

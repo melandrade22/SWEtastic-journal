@@ -147,6 +147,7 @@ def test_create():
     assert ppl.exists(ADD_EMAIL)
     ppl.delete(ADD_EMAIL)
 
+
 # # a conditional skip based on presence of TEST_EMAIL in people_dict
 # @pytest.mark.skipif(
 #     ppl.TEST_EMAIL in ppl.people_dict,
@@ -165,6 +166,13 @@ def test_update_affiliation(temp_person):
     ppl.update_affiliation(temp_person, "NewAffiliation")
     if temp_person in ppl.read():
         assert ppl.read()[temp_person]["affiliation"] == "NewAffiliation"
+
+
+def test_update_name(temp_person):
+    new_name = 'Bob Ross'
+    ppl.update_name(temp_person, new_name)
+    if temp_person in ppl.read():
+        assert ppl.read()[temp_person]["name"] == new_name
 
 
 VALID_ROLES = ['ED', 'AU']

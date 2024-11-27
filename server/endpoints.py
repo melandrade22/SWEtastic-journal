@@ -180,11 +180,37 @@ class PeopleAffiliationUpdate(Resource):
         }
 
 
+@api.route(f'{PEOPLE_EP}/updateName/<email>/<new_name>')
+class PeopleNameUpdate(Resource):
+    """
+    Update a person's affiliation given their email and the new name
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    def put(self, email, new_name):
+        """
+        Update an affiliation
+        """
+        try:
+            ret = ppl.update_name(email, new_name)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Error updating name {err}')
+        if ret:
+            msg = f'Name has been updated to {new_name}!'
+        else:
+            msg = "Failed to update name"
+        return {
+            'EMAIL': ret,
+            MESSAGE: msg
+
+        }
+
+
 @api.route('/people/<string:email>/addRole/<string:role>')
 class AddRole(Resource):
     def put(self, email, role):
         try:
-            person = ppl.get_person(email)
+            person = ppl.read_one(email)
         except ValueError:
             mssg = f"{person} not found, please create the person first"
             return {"message": mssg}, 404
@@ -199,7 +225,7 @@ class AddRole(Resource):
 class RemoveRole(Resource):
     def put(self, email, role):
         try:
-            person = ppl.get_person(email)
+            person = ppl.read_one(email)
         except ValueError:
             mssg = f"{person} not found"
             return {"message": mssg}, 404

@@ -80,26 +80,34 @@ def test_delete(mock_person):
 def test_update_affiliation_endpoint(mock_person):
     new_affiliation = "New Affiliation"
     resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/updateAffiliation/{mock_person}/{new_affiliation}')
-    print(f"Response JSON: {resp.json}") 
-    print(f"Response Status Code: {resp.status_code}")
     assert resp.status == "200 OK"
+    person = ppl.read_one(mock_person)
+    assert new_affiliation in person['affiliation']
 
 
-def test_add_role():
-    email = "aae2042@nyu.edu"
+def test_update_name_endpoint(mock_person):
+    new_name = "Bob Ross"
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/updateName/{mock_person}/{new_name}')
+    assert resp.status == "200 OK"
+    person = ppl.read_one(mock_person)
+    assert new_name in person['name']
+
+
+def test_add_role(mock_person):
+    email = mock_person
     role = "ED"
     resp = TEST_CLIENT.put(f'/people/{email}/addRole/{role}')
     assert resp.status == "200 OK"
-    person = ppl.get_person(email)
+    person = ppl.read_one(email)
     assert role in person['roles']
 
 
-def test_remove_role():
-    email = "aae2042@nyu.edu"
-    role = "ED"
+def test_remove_role(mock_person):
+    email = mock_person
+    role = TEST_ROLE
     resp = TEST_CLIENT.put(f'/people/{email}/removeRole/{role}')
     assert resp.status == "200 OK"
-    person = ppl.get_person(email)
+    person = ppl.read_one(email)
     assert role not in person['roles']
 
 
