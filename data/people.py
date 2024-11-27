@@ -125,13 +125,27 @@ def read_one(email: str) -> dict:
     return dbc.read_one(PEOPLE_COLLECT, {EMAIL: email})
 
 
+def read_roles(email: str) -> list:
+    """
+    Return a person record if email present in DB,
+    else None.
+    """
+    person = read_one(email)
+    if not exists(email):
+        return []
+    roles = person[ROLES]
+    if not isinstance(roles, list):
+        roles = [roles]
+    return roles
+
+
 # New function to add a role to an existing person
 def add_role(email: str, role: str):
     if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
         raise KeyError(f"The role {role} doesn't exist")
-    person_roles = read_one(email)[ROLES]
+    person_roles = read_roles(email)
     if role not in person_roles:
         person_roles.append(role)
         update_roles(email, person_roles)
@@ -144,7 +158,7 @@ def remove_role(email: str, role: str):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
         raise KeyError(f"The role {role} doesn't exist")
-    person_roles = read_one(email)[ROLES]
+    person_roles = read_roles(email)
     if role in person_roles:
         person_roles.remove(role)
         update_roles(email, person_roles)

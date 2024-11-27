@@ -223,7 +223,7 @@ class AddRole(Resource):
 
 @api.route('/people/<string:email>/removeRole/<string:role>')
 class RemoveRole(Resource):
-    def put(self, email, role):
+    def delete(self, email, role):
         try:
             person = ppl.read_one(email)
         except ValueError:

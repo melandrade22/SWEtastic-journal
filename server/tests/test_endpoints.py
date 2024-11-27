@@ -105,7 +105,7 @@ def test_add_role(mock_person):
 def test_remove_role(mock_person):
     email = mock_person
     role = TEST_ROLE
-    resp = TEST_CLIENT.put(f'/people/{email}/removeRole/{role}')
+    resp = TEST_CLIENT.delete(f'/people/{email}/removeRole/{role}')
     assert resp.status == "200 OK"
     person = ppl.read_one(email)
     assert role not in person['roles']

@@ -111,7 +111,7 @@ def test_is_valid_email_no_end_dot_local():
     assert not ppl.is_valid_email(NO_END_DOT_LOCAL)
 
 
-def test_read(temp_person):
+def test_read():
     people = ppl.read()
     assert isinstance(people, dict)
     assert len(people) > 0
@@ -127,6 +127,11 @@ def test_read_one(temp_person):
 
 def test_read_one_not_there():
     assert ppl.read_one('Not an existing email!') is None
+
+
+def test_read_roles(temp_person):
+    assert type(ppl.read_roles(temp_person)) is list
+    assert ppl.read_one(temp_person)['roles'] == ppl.read_roles(temp_person)
 
 
 def test_exists(temp_person):
