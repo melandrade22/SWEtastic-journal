@@ -111,7 +111,7 @@ def test_is_valid_email_no_end_dot_local():
     assert not ppl.is_valid_email(NO_END_DOT_LOCAL)
 
 
-def test_read():
+def test_read(temp_person):
     people = ppl.read()
     assert isinstance(people, dict)
     assert len(people) > 0
