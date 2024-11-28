@@ -116,8 +116,9 @@ def test_read(temp_person):
     assert isinstance(people, dict)
     assert len(people) > 0
     # check for string IDs:
-    for _id, person in people.items():
-        assert isinstance(_id, str)
+    # now checks for string emails in people dict
+    for email, person in people.items():
+        assert isinstance(email, str)
         assert ppl.NAME in person
 
 
