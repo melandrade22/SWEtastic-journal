@@ -91,9 +91,10 @@ def exists(email: str) -> bool:
 
 
 def create(name: str, affiliation: str, email: str, role: str):
-    if exists(email):
-        raise ValueError(f"Adding duplicate {email=}")
-    if is_valid_person(name, affiliation, email, role):
+    # if exists(email):
+    #     raise ValueError(f"Adding duplicate {email=}")
+    #  Add a person only if they are valid & do not already exist in the DB
+    if is_valid_person(name, affiliation, email, role) and not exists(email):
         roles = []
         if role:
             roles.append(role)
