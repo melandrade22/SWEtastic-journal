@@ -163,10 +163,10 @@ def test_create():
 
 def test_create_duplicate(temp_person):
     # with pytest.raises(ValueError):
-    ppl.create('Do not care about name',
+    person_stub = ppl.create('Do not care about name',
                    'Or affiliation', temp_person,
                    TEST_ROLE_CODE)
-    # assert person_stub is None
+    assert person_stub is None
 
 
 def test_update_affiliation(temp_person):
