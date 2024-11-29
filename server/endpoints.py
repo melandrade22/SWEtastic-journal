@@ -306,3 +306,15 @@ class DeleteJournalPage(Resource):
             return {"message": result}, HTTPStatus.OK
         else:
             raise wz.NotFound(result)
+
+
+MASTHEAD = 'Masthead'
+
+
+@api.route(f'{PEOPLE_EP}/masthead')
+class Masthead(Resource):
+    """
+    Get a journal's masthead.
+    """
+    def get(self):
+        return {MASTHEAD: ppl.get_masthead()}
