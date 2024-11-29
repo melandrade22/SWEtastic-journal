@@ -168,3 +168,13 @@ def test_read_people(mock_person):
     # Additional assertion to check a specific name, if needed
     assert 'sample_id' in resp_json
     assert resp_json['sample_id'][NAME] == 'Alice Example'
+
+
+def test_get_masthead():
+    resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/masthead')
+    assert resp.status_code == OK, f"Expected status code 200, got {resp.status_code}"
+    resp_json = resp.get_json()
+    assert ep.MASTHEAD in resp_json, "Response JSON does not contain 'Masthead' key"
+    
+    masthead = resp_json[ep.MASTHEAD]
+    assert isinstance(masthead, dict), f"Masthead should be a dictionary, got {type(masthead)}" 
