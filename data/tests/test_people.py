@@ -214,6 +214,32 @@ def test_doesnt_have_role(temp_person):
     assert not ppl.has_role(person_rec, 'Not a good role!')
 
 
+def test_remove_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    ppl.remove_role(temp_person,'AU')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' not in new_roles
+
+
+def test_add_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    ppl.add_role(temp_person,'ME')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+    assert 'ME' in new_roles
+
+
+def test_swap_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    ppl.swap_role(temp_person,'AU','ME')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' not in new_roles
+    assert 'ME' in new_roles
+
+
 def test_create_mh_rec(temp_person):
     person_rec = ppl.read_one(temp_person)
     mh_rec = ppl.create_mh_rec(person_rec)

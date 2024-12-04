@@ -140,8 +140,23 @@ def read_roles(email: str) -> list:
     return roles
 
 
-# New function to add a role to an existing person
+def update_roles(email: str, roles: list):
+    """
+    updating the roles in a person's DB
+    """
+    if not exists(email):
+        raise ValueError(f'Updating non-existent person: {email=}')
+    ret = dbc.update(PEOPLE_COLLECT,
+                     {EMAIL: email},
+                     {ROLES: roles})
+    print(f'{ret=}')
+    return email
+
+
 def add_role(email: str, role: str):
+    """
+    Add a role to an existing person
+    """
     if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
@@ -153,8 +168,10 @@ def add_role(email: str, role: str):
     return email
 
 
-# New function to remove a role from an existing person
 def remove_role(email: str, role: str):
+    """
+    Removing a role from an existing person
+    """
     if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
@@ -163,6 +180,15 @@ def remove_role(email: str, role: str):
     if role in person_roles:
         person_roles.remove(role)
         update_roles(email, person_roles)
+    return email
+
+
+def swap_role(email: str, old_role: str, new_role: str):
+    """
+    swapping an old role for a new one
+    """
+    remove_role(email, old_role)
+    add_role(email, new_role)
     return email
 
 
@@ -199,16 +225,6 @@ def update_name(email: str, name: str):
     ret = dbc.update(PEOPLE_COLLECT,
                      {EMAIL: email},
                      {NAME: name})
-    print(f'{ret=}')
-    return email
-
-
-def update_roles(email: str, roles: list):
-    if not exists(email):
-        raise ValueError(f'Updating non-existent person: {email=}')
-    ret = dbc.update(PEOPLE_COLLECT,
-                     {EMAIL: email},
-                     {ROLES: roles})
     print(f'{ret=}')
     return email
 
