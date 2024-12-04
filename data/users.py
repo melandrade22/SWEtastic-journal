@@ -24,3 +24,18 @@ def get_users():
         },
     }
     return users
+
+
+def delete_user(users, name):
+    """
+    Delete a user from the dictionary.
+    Args:
+        users (dict): Current dictionary of users.
+        name (str): Name of the user to remove.
+    Raises:
+        KeyError: If the user does not exist.
+    """
+    if name not in users:
+        raise KeyError("User not found.")
+    del users[name]
+    return users
