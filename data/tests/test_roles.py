@@ -47,7 +47,7 @@ def test_delete_rl_in_dict():
     assert rls.CE_CODE not in rls_after
 
 
-def test_delete_rl_in_dict_in_use():
+def test_delete_rl_in_dict_in_use(temp_person):
     with pytest.raises(ValueError):
         rls.delete_role(rls.AUTHOR_CODE)
    
@@ -76,11 +76,11 @@ def test_is_valid_key():
     assert rls.is_valid_key(key)
 
 
-def test_role_not_in_use():
+def test_role_not_in_use(temp_person):
     assert rls.is_in_use('ME') is False
 
 
-def test_role_in_use():
+def test_role_in_use(temp_person):
     assert rls.is_in_use('AU') is True
 
 
