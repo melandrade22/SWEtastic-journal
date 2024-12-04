@@ -4,7 +4,13 @@ This module manages person roles for a journal.
 from copy import deepcopy
 import data.people as ppl
 import re
+import data.db_connect as dbc
 
+# Make the connection
+client = dbc.connect_db()
+print(f"{client=}")
+
+ROLE_COLLECT = 'roles'
 AUTHOR_CODE = 'AU'
 TEST_CODE = AUTHOR_CODE
 ED_CODE = 'ED'
@@ -54,24 +60,7 @@ def get_masthead_roles() -> dict:
     return mh_roles
 
 
-def update(_email, _role_code):
-    """
-    _email (str): represents a possible key within dictionary of people
-    _role_code (str): new role we desire to change the existing role to
-    for the person associated with the specified email
-    returns (str) of _email if successful, None if "failed"
-    """
-    people = ppl.read()
-    # Verify that the provided _email and  _role_code exists
-    if _email in people and _role_code in get_roles():
-        # Verify we will not override with the same _role_code value
-        if _role_code != people[_email][ROLE_IDX]:
-            people[_email][ROLE_IDX] = _role_code
-            return _email
-    return None
-
-
-def create_rl_in_dict(key: str, role: str):
+def create_role(key: str, role: str):
     """
     Adding a role to the existing ones in the ROLES dictionary
     """
@@ -84,19 +73,48 @@ def create_rl_in_dict(key: str, role: str):
     return key
 
 
-def delete_rl_in_dict(_role_code):
+def delete_role(code):
     """
     Deleting roles from the ROLES dictionary
+    only allowed if the role is not in use
     """
-    roles = ROLES
-    if _role_code in roles:
-        del roles[_role_code]
-        return _role_code
+    if is_in_use(code):
+        raise ValueError(f"{code} is being used by"
+                         + f"{roles_in_use(code)} people")
+    if is_valid(code):
+        del ROLES[code]
+        return code
     else:
         return None
 
 
+def roles_in_use(role_code) -> int:
+    """
+    couting how many people in the DB use the role
+    """
+    people = ppl.read()
+    count = 0
+    for person in people.values():
+        if role_code in person.get('roles', []):
+            count += 1
+    return count
+
+
+def is_in_use(role_code) -> bool:
+    """
+    checking if the role is being used in the people DB
+    """
+    people = ppl.read()
+    for person in people.values():
+        if role_code in person.get('roles', []):
+            return True
+    return False
+
+
 def is_valid(code: str) -> bool:
+    """
+    checking if the role exist in ROLES dict
+    """
     return code in ROLES
 
 
@@ -107,6 +125,10 @@ def get_role_codes() -> list:
 def main():
     print(get_roles())
     print(get_masthead_roles())
+    print("Reading the people dict:")
+    print(ppl.read())
+    print('role in use count: ')
+    print(roles_in_use(AUTHOR_CODE))
 
 
 if __name__ == '__main__':

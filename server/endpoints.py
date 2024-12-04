@@ -10,6 +10,7 @@ from flask_cors import CORS
 
 import data.people as ppl
 import data.text as txt
+# import data.roles as rls
 
 import werkzeug.exceptions as wz
 
@@ -37,6 +38,7 @@ JOURNAL_EP = '/journalTitle'
 JOURNAL_RESP = 'Journal Title'
 TITLE = "SWEtastic-journal"
 TXT_EP = '/text'
+ROLE_EP = '/role'
 
 
 @api.route(HELLO_EP)
@@ -183,13 +185,13 @@ class PeopleAffiliationUpdate(Resource):
 @api.route(f'{PEOPLE_EP}/updateName/<email>/<new_name>')
 class PeopleNameUpdate(Resource):
     """
-    Update a person's affiliation given their email and the new name
+    Update a person's name given their email and the new name
     """
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
     def put(self, email, new_name):
         """
-        Update an affiliation
+        Update a person's nane
         """
         try:
             ret = ppl.update_name(email, new_name)
@@ -206,7 +208,7 @@ class PeopleNameUpdate(Resource):
         }
 
 
-@api.route('/people/<string:email>/addRole/<string:role>')
+@api.route(f'{PEOPLE_EP}/<string:email>/addRole/<string:role>')
 class AddRole(Resource):
     def put(self, email, role):
         try:
@@ -221,7 +223,7 @@ class AddRole(Resource):
         return {"message": f"Role '{role}' added to {email}"}, 200
 
 
-@api.route('/people/<string:email>/removeRole/<string:role>')
+@api.route(f'{PEOPLE_EP}/<string:email>/removeRole/<string:role>')
 class RemoveRole(Resource):
     def delete(self, email, role):
         try:

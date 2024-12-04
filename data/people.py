@@ -128,7 +128,7 @@ def read_one(email: str) -> dict:
 
 def read_roles(email: str) -> list:
     """
-    Return a person record if email present in DB,
+    Return a person's roles if email present in DB,
     else None.
     """
     person = read_one(email)
