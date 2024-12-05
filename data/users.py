@@ -39,3 +39,11 @@ def delete_user(users, name):
         raise KeyError("User not found.")
     del users[name]
     return users
+
+
+def update_user_level(users, name, new_level):
+    if name not in users:
+        err = f"Update user {name} with level {new_level} failed"
+        raise KeyError(err)
+    users[name][LEVEL] = new_level
+    return users
