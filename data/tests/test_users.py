@@ -31,3 +31,23 @@ def test_delete_user():
         assert str(e) == "'User not found.'"
     else:
         assert False, "Expected KeyError for non-existent user"
+
+def test_update_user_level():
+    users = usrs.get_users()
+    original_count = len(users)
+    user_to_update = usrs.TEST_UPDATE_LEVEL_NAME
+    desired_level = usrs.TEST_UPDATE_LEVEL_AFTER_UPDATE
+    updated_users = usrs.update_user_level(users, user_to_update, desired_level)
+    assert len(updated_users) == original_count  # No changes made to length of dict
+    assert users[user_to_update][usrs.LEVEL] == desired_level
+    # Revert the update back to its original state
+    users[user_to_update][usrs.LEVEL] = usrs.TEST_UPDATE_LEVEL_BEFORE_UPDATE
+    # Try to update a non-existent user
+    try:
+        usrs.update_user_level(updated_users, "NameDontExist", desired_level)
+    except KeyError as e:
+        assert str(e) == "'Update user level failed, user not found'"
+    else:
+        assert False, "Expected KeyError for non-existent user"
+
+

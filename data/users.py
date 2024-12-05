@@ -4,6 +4,9 @@ This module interfaces to our user data.
 
 LEVEL = 'level'
 MIN_USER_NAME_LEN = 2
+TEST_UPDATE_LEVEL_NAME = "Kaitlyn"
+TEST_UPDATE_LEVEL_BEFORE_UPDATE = 2
+TEST_UPDATE_LEVEL_AFTER_UPDATE = 9000
 
 
 def get_users():
@@ -21,6 +24,9 @@ def get_users():
         },
         "Reddy": {
             LEVEL: 1,
+        },
+        "Kaitlyn": {
+            LEVEL: TEST_UPDATE_LEVEL_BEFORE_UPDATE
         },
     }
     return users
@@ -43,7 +49,6 @@ def delete_user(users, name):
 
 def update_user_level(users, name, new_level):
     if name not in users:
-        err = f"Update user {name} with level {new_level} failed"
-        raise KeyError(err)
+        raise KeyError("Update user level failed, user not found")
     users[name][LEVEL] = new_level
     return users
