@@ -59,6 +59,12 @@ STATE_TABLE = {
 }
 
 
+def get_valid_actions_by_state(state: str):
+    valid_actions = STATE_TABLE[state].keys()
+    print(f'{valid_actions=}')
+    return valid_actions
+
+
 def handle_action(curr_state, action) -> str:
     if not is_valid_state(curr_state):
         raise ValueError(f'Invalid state: {curr_state}')
