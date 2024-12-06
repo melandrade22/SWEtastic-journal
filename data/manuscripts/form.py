@@ -1,11 +1,13 @@
 "This module will provide a sample query form"
 
-import backendcore.data.form_filler as ff
+import examples.form_filler as ff
 
-from templates.fields import CODE 
+# from templates.fields import CODE 
 
+MOCK_CODE = "MOCK_CODE"
 FORM_FLDS = [{
-    ff.FLD_NM: CODE,
+    # ff.FLD_NM: CODE,
+    ff.FLD_NM: MOCK_CODE,
     ff.QSTN: 'Sample:',
     ff.PARAM_TYPE: ff.QUERY_STR,
 },
