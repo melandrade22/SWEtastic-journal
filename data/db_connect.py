@@ -5,7 +5,7 @@ import pymongo as pm
 LOCAL = "0"
 CLOUD = "1"
 
-SE_DB = 'seDB'
+SE_DB = 'generalDB'
 
 client = None
 
