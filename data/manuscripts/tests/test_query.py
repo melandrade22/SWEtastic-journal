@@ -62,6 +62,7 @@ def test_handle_action_valid_return():
             print(f'{new_state=}')
             assert mqry.is_valid_state(new_state)
 
+
 #verify the behavior of the assign_ref function to ensure it properly appends referees and changes the state to IN_REF_REV.
 def test_assign_ref():
     manu = mqry.SAMPLE_MANU.copy()

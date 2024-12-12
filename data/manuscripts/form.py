@@ -30,9 +30,9 @@ def get_fld_names() -> list:
 
 
 def main():
-    printf(f'Form: {get_form()=}')
-    printf(f'Form: {get_form_descr()=}')
-    printf(f'Field names: {get_fld_names()=}')
+    print(f'Form: {get_form()=}')
+    print(f'Form: {get_form_descr()=}')
+    print(f'Field names: {get_fld_names()=}')
 
 
 if __name__ == "__main__":

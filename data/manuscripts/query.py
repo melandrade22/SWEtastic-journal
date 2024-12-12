@@ -2,17 +2,26 @@ import data.manuscripts.fields as flds
 
 # states:
 AUTHOR_REV = 'AUR'
+AUTHOR_REVISIONS = 'ARN'
 COPY_EDIT = 'CED'
+EDITOR_REV = 'EDR'
+FORMATTING = 'FOR'
 IN_REF_REV = 'REV'
+PUBLISHED = 'PUB'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
 WITHDRAWN = 'WIT'
+
 TEST_STATE = SUBMITTED
 
 VALID_STATES = [
     AUTHOR_REV,
+    AUTHOR_REVISIONS,
     COPY_EDIT,
+    EDITOR_REV,
+    FORMATTING,
     IN_REF_REV,
+    PUBLISHED,
     REJECTED,
     SUBMITTED,
     WITHDRAWN,
@@ -36,20 +45,24 @@ def is_valid_state(state: str) -> bool:
 
 # actions:
 ACCEPT = 'ACC'
+ACCEPT_WTH_REVISIONS = 'AWR'
 ASSIGN_REF = 'ARF'
 DELETE_REF = 'DRF'
 DONE = 'DON'
 REJECT = 'REJ'
+SUB_REV = 'SBR'
 WITHDRAW = 'WIT'
 # for testing:
 TEST_ACTION = ACCEPT
 
 VALID_ACTIONS = [
     ACCEPT,
+    ACCEPT_WTH_REVISIONS,
     ASSIGN_REF,
     DELETE_REF,
     DONE,
     REJECT,
+    SUB_REV,
     WITHDRAW,
 ]
 
@@ -102,6 +115,15 @@ STATE_TABLE = {
         DELETE_REF: {
             FUNC: delete_ref,
         },
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        },
+        ACCEPT_WTH_REVISIONS: {
+            FUNC: lambda **kwargs: AUTHOR_REVISIONS,
+        },
+        SUB_REV: {
+            FUNC: lambda **kwargs: IN_REF_REV,
+        },
         **COMMON_ACTIONS,
     },
     COPY_EDIT: {
@@ -111,6 +133,15 @@ STATE_TABLE = {
         **COMMON_ACTIONS,
     },
     AUTHOR_REV: {
+        DONE: {
+            FUNC: lambda **kwargs: FORMATTING,
+        },
+        **COMMON_ACTIONS,
+    },
+    FORMATTING:{
+        DONE: {
+            FUNC: lambda **kwargs: PUBLISHED,
+        },
         **COMMON_ACTIONS,
     },
     REJECTED: {
@@ -119,8 +150,22 @@ STATE_TABLE = {
     WITHDRAWN: {
         **COMMON_ACTIONS,
     },
+    AUTHOR_REVISIONS: {
+        DONE: {
+            FUNC: lambda **kwargs: EDITOR_REV,
+        },
+        **COMMON_ACTIONS,
+    },
+    EDITOR_REV: {
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        },
+        **COMMON_ACTIONS,
+    },
+    PUBLISHED: {
+        **COMMON_ACTIONS,
+    },
 }
-
 
 
 def get_valid_actions_by_state(state: str):
