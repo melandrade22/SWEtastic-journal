@@ -23,7 +23,6 @@ def test_delete_user():
     # verifying if the user is removed
     assert len(updated_users) == original_count - 1  # user decreases by one 
     assert user_to_delete not in updated_users  # the user that was deleted is not present 
-
     # try to delete a non-existent user
     try:
         usrs.delete_user(updated_users, "NonExistentUser")
