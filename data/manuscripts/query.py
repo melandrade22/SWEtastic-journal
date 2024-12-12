@@ -8,8 +8,6 @@ REJECTED = 'REJ'
 SUBMITTED = 'SUB'
 WITHDRAWN = 'WIT'
 TEST_STATE = SUBMITTED
-AUTHOR_REV = 'AUR'
-WITHDRAWN = 'WIT'
 
 VALID_STATES = [
     AUTHOR_REV,
@@ -17,9 +15,15 @@ VALID_STATES = [
     IN_REF_REV,
     REJECTED,
     SUBMITTED,
-    AUTHOR_REV,
     WITHDRAWN,
 ]
+
+
+SAMPLE_MANU = {
+    flds.TITLE: 'Sample Manuscript',
+    flds.AUTHOR: 'Author',
+    flds.REFEREES: [],
+}
 
 
 def get_states() -> list:
