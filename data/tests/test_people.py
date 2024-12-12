@@ -222,6 +222,25 @@ def test_remove_role(temp_person):
     assert 'AU' not in new_roles
 
 
+def test_remove_role_no_have(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    assert 'ME' not in old_roles
+    with pytest.raises(ValueError):
+        ppl.remove_role(temp_person,'ME')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+    assert 'ME' not in old_roles
+
+
+def test_remove_bad_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    with pytest.raises(KeyError):
+        ppl.remove_role(temp_person,'HI')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+
 def test_add_role(temp_person):
     old_roles = ppl.read_roles(temp_person)
     assert 'AU' in old_roles
@@ -230,6 +249,26 @@ def test_add_role(temp_person):
     assert 'AU' in new_roles
     assert 'ME' in new_roles
 
+def test_add_bad_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    with pytest.raises(KeyError):
+        ppl.add_role(temp_person,'MEL')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+    assert 'MEL' not in new_roles
+
+
+def test_add_role_wth_same_role(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    assert old_roles.count('AU') == 1
+    with pytest.raises(ValueError):
+        ppl.add_role(temp_person,'AU')
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+    assert new_roles.count('AU') == 1
+    
 
 def test_swap_role(temp_person):
     old_roles = ppl.read_roles(temp_person)

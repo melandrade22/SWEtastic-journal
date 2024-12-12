@@ -165,6 +165,8 @@ def add_role(email: str, role: str):
     if role not in person_roles:
         person_roles.append(role)
         update_roles(email, person_roles)
+    else:
+        raise ValueError(f"Person is already assigned role: {role}")
     return email
 
 
@@ -180,12 +182,14 @@ def remove_role(email: str, role: str):
     if role in person_roles:
         person_roles.remove(role)
         update_roles(email, person_roles)
+    else:
+        raise ValueError(f"Person did not have role: {role} to delete")
     return email
 
 
 def swap_role(email: str, old_role: str, new_role: str):
     """
-    swapping an old role for a new one
+    updating role by swapping an old role for a new one
     """
     remove_role(email, old_role)
     add_role(email, new_role)
