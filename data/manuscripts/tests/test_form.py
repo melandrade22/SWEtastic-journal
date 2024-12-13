@@ -23,5 +23,14 @@ def test_get_form():
     assert "param_type" in result[0], "Parameter type key missing in form field"
 
 
+@patch('examples.form_filler.get_form_descr', autospec=True)
+def test_get_form_descr(mock_get_form_descr):
+    mock_get_form_descr.return_value = "Mocked Form Description"
+    result = mfrm.get_form_descr()
+
+    assert result == "Mocked Form Description", "get_form_descr did not return the expected value"
+    mock_get_form_descr.assert_called_once_with(mfrm.FORM_FLDS)
+
+
 if __name__ == "__main__":
     pytest.main()
