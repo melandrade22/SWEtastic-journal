@@ -32,5 +32,15 @@ def test_get_form_descr(mock_get_form_descr):
     mock_get_form_descr.assert_called_once_with(mfrm.FORM_FLDS)
 
 
+@patch('examples.form_filler.get_fld_names', autospec=True)
+def test_get_fld_names(mock_get_fld_names):
+    mock_get_fld_names.return_value = ["MOCK_FIELD_NAME"]
+    result = mfrm.get_fld_names()
+
+    assert isinstance(result, list), "get_fld_names should return a list"
+    assert result == ["MOCK_FIELD_NAME"], "get_fld_names did not return the expected value"
+    mock_get_fld_names.assert_called_once_with(mfrm.FORM_FLDS)
+
+
 if __name__ == "__main__":
     pytest.main()
