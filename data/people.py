@@ -187,6 +187,22 @@ def remove_role(email: str, role: str):
     return email
 
 
+def remove_all_roles(email: str):
+    """
+    Clear a user of all their roles
+    """
+    if not exists(email):
+        raise ValueError(f'Person with {email} not found')
+    person_roles = read_roles(email)
+    for role in person_roles:
+        if role in person_roles:
+            person_roles.remove(role)
+            update_roles(email, person_roles)
+        else:
+            raise ValueError(f"Person did not have role: {role} to delete")
+    return email
+
+
 def swap_role(email: str, old_role: str, new_role: str):
     """
     updating role by swapping an old role for a new one
