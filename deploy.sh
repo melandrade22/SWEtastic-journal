@@ -4,7 +4,6 @@
 PROJ_DIR=SWEtastic-journal
 VENV=myvirtualenvg
 PA_DOMAIN="swetasticfour.pythonanywhere.com"
-DEMO_PA_PWD='swe2024to25'
 PA_USER='swetasticfour'
 echo "Project dir = $PROJ_DIR"
 echo "PA domain = $PA_DOMAIN"
