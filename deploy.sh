@@ -2,7 +2,7 @@
 # This shell script deploys a new version to a server.
 
 PROJ_DIR=SWEtastic-journal
-VENV=Fall2023
+VENV=myvirtualenvg
 PA_DOMAIN="swetasticfour.pythonanywhere.com"
 PA_USER='swetasticfour'
 DEMO_PA_PWD='2024sweto25'
