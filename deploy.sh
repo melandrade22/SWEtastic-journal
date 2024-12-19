@@ -5,6 +5,7 @@ PROJ_DIR=SWEtastic-journal
 VENV=Fall2023
 PA_DOMAIN="swetasticfour.pythonanywhere.com"
 PA_USER='swetasticfour'
+DEMO_PA_PWD='2024sweto25'
 echo "Project dir = $PROJ_DIR"
 echo "PA domain = $PA_DOMAIN"
 echo "Virtual env = $VENV"
