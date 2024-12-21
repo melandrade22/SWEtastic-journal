@@ -5,7 +5,7 @@ PROJ_DIR=SWEtastic-journal
 VENV=myvirtualenv
 PA_DOMAIN="swetasticfour.pythonanywhere.com"
 PA_USER='swetasticfour'
-DEMO_PA_PWD='swe2024to25'
+DEMO_PA_PWD='$2b$12$BFHNYNy9l.lr5moRYmOE1.BEH6Xv.851hgmhlFod6ELJV8lmTv3om'
 echo "Project dir = $PROJ_DIR"
 echo "PA domain = $PA_DOMAIN"
 echo "Virtual env = $VENV"
@@ -15,6 +15,7 @@ then
     echo "The PythonAnywhere password var (DEMO_PA_PWD) must be set in the env."
     exit 1
 fi
+
 
 echo "PA user = $PA_USER"
 echo "PA password = $DEMO_PA_PWD"
