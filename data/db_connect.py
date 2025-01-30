@@ -34,7 +34,10 @@ def connect_db():
                                     + 'retryWrites=true'
                                     + '&w=majority'
                                     + '&appName=Cluster0',
-                                    connectTimeoutMS=30000)
+                                    connectTimeoutMS=30000,
+                                    socketTimeoutMS=None,
+                                    connect=False,
+                                    maxPoolsize=1)
         else:
             print("Connecting to Mongo locally.")
             client = pm.MongoClient("mongodb://localhost:27017/")
