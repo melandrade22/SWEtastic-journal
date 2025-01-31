@@ -30,6 +30,7 @@ HELLO_EP = '/hello'
 HELLO_RESP = 'hello'
 PEOPLE_EP = '/people'
 MESSAGE = 'Message'
+DEL_COUNT = 'Deleted Count'
 PUBLISHER = 'Springer'
 PUBLISHER_RESP = 'Publisher'
 RETURN = 'return'
@@ -122,9 +123,13 @@ class Person(Resource):
     @api.response(HTTPStatus.OK, 'Success.')
     @api.response(HTTPStatus.NOT_FOUND, 'No such person.')
     def delete(self, email):
+        # The number of people deleted
         ret = ppl.delete(email)
-        if ret is not None:
-            return {'Deleted': ret}
+        if ret != 0:
+            return {
+                MESSAGE: f'Successfully deleted {email}',
+                DEL_COUNT: ret
+            }
         else:
             raise wz.NotFound(f'No such person: {email}')
 

@@ -169,8 +169,7 @@ def test_create_duplicate(temp_person):
     assert person_stub is None
 
 
-def test_update_affiliation(temp_person):
-    
+def test_update_affiliation(temp_person):    
     ppl.update_affiliation(temp_person, "NewAffiliation")
     if temp_person in ppl.read():
         assert ppl.read()[temp_person]["affiliation"] == "NewAffiliation"
