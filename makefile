@@ -25,3 +25,7 @@ dev_env: FORCE
 
 docs: FORCE
 	cd $(API_DIR); make docs
+
+build:
+	@echo "Run 'source build.sh' manually to run in current shell"
+	./build.sh
