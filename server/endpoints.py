@@ -30,6 +30,7 @@ ENDPOINT_RESP = 'Available endpoints'
 HELLO_EP = '/hello'
 HELLO_RESP = 'hello'
 PEOPLE_EP = '/people'
+MANU_EP = '/manuscripts'
 MESSAGE = 'Message'
 DEL_COUNT = 'Deleted Count'
 PUBLISHER = 'Springer'
@@ -329,7 +330,7 @@ class Masthead(Resource):
 
 
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
-    manu.MANU_ID: fields.String,
+    # manu.MANU_ID: fields.String,
     manu.CURR_STATE: fields.String,
     manu.ACTION: fields.String,
     manu.REFEREE: fields.String,
@@ -350,15 +351,15 @@ class ReceiveAction(Resource):
         """
         try:
             print(request. json)
-            manu_id = request. json.get(manu.MANU_ID)
-            curr_state = request.json.get(manu.CURR_STATE)
-            action = request. json.get(manu.ACTION)
-            kwargs = t
-            kwargs [manu. REFEREE] = request.json.get(manu.REFEREE)
-            ret = manu.handle_action(manu_id, curr_state, action, **kwargs)
+            # manu_id = request. json.get(manu.MANU_ID)
+            # curr_state = request.json.get(manu.CURR_STATE)
+            # action = request. json.get(manu.ACTION)
+            kwargs = {}
+            kwargs[manu.REFEREE] = request.json.get(manu.REFEREE)
+            # ret = manu.handle_action(manu_id, curr_state, action, **kwargs)
         except Exception as err:
-            raise wz. NotAcceptable(f'Bad action: ' f'{err=}')
+            raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
         return {
             MESSAGE: 'Action received!',
-            RETURN: ret,
+            # RETURN: ret,
         }
