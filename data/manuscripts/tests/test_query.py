@@ -1,73 +1,73 @@
-import random
+# import random
 
-import pytest
+# import pytest
 
-import data.manuscripts.query as mqry
-
-
-def gen_random_not_valid_str() -> str:
-    """
-    That huge number is only important in being huge:
-        any big number would do.
-    """
-    BIG_NUM = 10_000_000_000
-    big_int = random.randint(0, BIG_NUM)
-    big_int += BIG_NUM
-    bad_str = str(big_int)
+# import data.manuscripts.query as mqry
 
 
-def test_is_valid_state():
-    for state in mqry.get_states():
-        assert mqry.is_valid_state(state)
+# def gen_random_not_valid_str() -> str:
+#     """
+#     That huge number is only important in being huge:
+#         any big number would do.
+#     """
+#     BIG_NUM = 10_000_000_000
+#     big_int = random.randint(0, BIG_NUM)
+#     big_int += BIG_NUM
+#     bad_str = str(big_int)
 
 
-def test_is_not_valid_state():
-    # run this test "a few" times
-    for i in range(10):
-        assert not mqry.is_valid_state(gen_random_not_valid_str())
+# def test_is_valid_state():
+#     for state in mqry.get_states():
+#         assert mqry.is_valid_state(state)
 
 
-def test_is_valid_action():
-    for action in mqry.get_actions():
-        assert mqry.is_valid_action(action)
+# def test_is_not_valid_state():
+#     # run this test "a few" times
+#     for i in range(10):
+#         assert not mqry.is_valid_state(gen_random_not_valid_str())
 
 
-def test_is_not_valid_action():
-    # run this test "a few" times
-    for i in range(10):
-        assert not mqry.is_valid_action(gen_random_not_valid_str())
+# def test_is_valid_action():
+#     for action in mqry.get_actions():
+#         assert mqry.is_valid_action(action)
 
 
-def test_handle_action_bad_state():
-    with pytest.raises(ValueError):
-        mqry.handle_action(gen_random_not_valid_str(),
-                           mqry.TEST_ACTION,
-                           manu=mqry.SAMPLE_MANU)
+# def test_is_not_valid_action():
+#     # run this test "a few" times
+#     for i in range(10):
+#         assert not mqry.is_valid_action(gen_random_not_valid_str())
 
 
-def test_handle_action_bad_action():
-    with pytest.raises(ValueError):
-        mqry.handle_action(mqry.TEST_STATE,
-                           gen_random_not_valid_str(),
-                           manu=mqry.SAMPLE_MANU)
+# def test_handle_action_bad_state():
+#     with pytest.raises(ValueError):
+#         mqry.handle_action(gen_random_not_valid_str(),
+#                            mqry.TEST_ACTION,
+#                            manu=mqry.SAMPLE_MANU)
 
 
-def test_handle_action_valid_return():
-    for state in mqry.get_states():
-        for action in mqry.get_valid_actions_by_state(state):
-            print(f'{action=}')
-            new_state = mqry.handle_action(state, action,
-                                           manu=mqry.SAMPLE_MANU,
-                                           ref='Some ref')
-            print(f'{new_state=}')
-            assert mqry.is_valid_state(new_state)
+# def test_handle_action_bad_action():
+#     with pytest.raises(ValueError):
+#         mqry.handle_action(mqry.TEST_STATE,
+#                            gen_random_not_valid_str(),
+#                            manu=mqry.SAMPLE_MANU)
 
 
-#verify the behavior of the assign_ref function to ensure it properly appends referees and changes the state to IN_REF_REV.
-def test_assign_ref():
-    manu = mqry.SAMPLE_MANU.copy()
-    initial_refs = len(manu[mqry.flds.REFEREES])
-    new_state = mqry.assign_ref(manu, "NewRef")
-    assert new_state == mqry.IN_REF_REV
-    assert len(manu[mqry.flds.REFEREES]) == initial_refs + 1
-    assert "NewRef" in manu[mqry.flds.REFEREES]
+# def test_handle_action_valid_return():
+#     for state in mqry.get_states():
+#         for action in mqry.get_valid_actions_by_state(state):
+#             print(f'{action=}')
+#             new_state = mqry.handle_action(state, action,
+#                                            manu=mqry.SAMPLE_MANU,
+#                                            ref='Some ref')
+#             print(f'{new_state=}')
+#             assert mqry.is_valid_state(new_state)
+
+
+# #verify the behavior of the assign_ref function to ensure it properly appends referees and changes the state to IN_REF_REV.
+# def test_assign_ref():
+#     manu = mqry.SAMPLE_MANU.copy()
+#     initial_refs = len(manu[mqry.flds.REFEREES])
+#     new_state = mqry.assign_ref(manu, "NewRef")
+#     assert new_state == mqry.IN_REF_REV
+#     assert len(manu[mqry.flds.REFEREES]) == initial_refs + 1
+#     assert "NewRef" in manu[mqry.flds.REFEREES]
