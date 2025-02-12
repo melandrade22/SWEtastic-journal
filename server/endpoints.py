@@ -10,6 +10,7 @@ from flask_cors import CORS
 
 import data.people as ppl
 import data.text as txt
+import data.manuscripts as manu
 # import data.roles as rls
 
 import werkzeug.exceptions as wz
