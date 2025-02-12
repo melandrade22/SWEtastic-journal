@@ -325,3 +325,11 @@ class Masthead(Resource):
     """
     def get(self):
         return {MASTHEAD: ppl.get_masthead()}
+
+
+MANU_ACTION_FLDS = api.model('ManuscriptAction', {
+    manu.MANU_ID: fields.String,
+    manu.CURR_STATE: fields.String,
+    manu.ACTION: fields.String,
+    manu.REFEREE: fields.String,
+})
