@@ -154,6 +154,10 @@ class PeopleCreate(Resource):
             email = request.json.get(ppl.EMAIL)
             roles = request.json.get(ppl.ROLES)
             ret = ppl.create(name, affiliation, email, roles)
+            # Validate required fields
+            if not name or not affiliation or not email:
+                raise ValueError("Missing required fields: 'name',"
+                                 + "'affiliation', or 'email'.")
         except Exception as err:
             raise wz.NotAcceptable(f'This person could not be added: '
                                    f'{err=}')
