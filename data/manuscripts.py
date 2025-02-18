@@ -19,14 +19,17 @@ FIELDS = {
 }
 
 # states:
-AUTHOR_REV = 'AUR'
+AUTHOR_REV = 'AUR' # Author Review
+AUTHOR_REVISION = "ARV" # Author Revision
 COPY_EDIT = 'CED'
 IN_REF_REV = 'REV'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
 WITHDRAWN = 'WIT'
+FORMATTING = 'FOR' # additional states
+PUBLISHED = 'PUB'
+EDITOR_REVIEW = "EDR"
 TEST_STATE = SUBMITTED
-
 VALID_STATES = [
     AUTHOR_REV,
     COPY_EDIT,
@@ -34,6 +37,9 @@ VALID_STATES = [
     REJECTED,
     SUBMITTED,
     WITHDRAWN,
+    FORMATTING,
+    PUBLISHED,
+    EDITOR_REV,
 ]
 
 
@@ -59,6 +65,7 @@ DELETE_REF = 'DRF'
 DONE = 'DON'
 REJECT = 'REJ'
 WITHDRAW = 'WIT'
+ACCEPT_REV = 'ACR' # Accept with revisions
 # for testing:
 TEST_ACTION = ACCEPT
 
@@ -69,6 +76,7 @@ VALID_ACTIONS = [
     DONE,
     REJECT,
     WITHDRAW,
+    ACCEPT_REV,
 ]
 
 
@@ -119,7 +127,23 @@ STATE_TABLE = {
         DELETE_REF: {
             FUNC: delete_ref,
         },
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        },
+        ACCEPT_REV: {
+            FUNC: lambda **kwargs:  AUTHOR_REVISION,
+        },
         **COMMON_ACTIONS,
+    },
+    AUTHOR_REVISION: {
+        DONE: {
+            FUNC: lambda **kwargs: EDITOR_REVIEW,
+        }
+    },
+    EDITOR_REVIEW: {
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        }
     },
     COPY_EDIT: {
         DONE: {
@@ -128,14 +152,27 @@ STATE_TABLE = {
         **COMMON_ACTIONS,
     },
     AUTHOR_REV: {
+        DONE: {
+            FUNC: lambda **kwargs: FORMATTING,
+        },
         **COMMON_ACTIONS,
     },
+    
     REJECTED: {
         **COMMON_ACTIONS,
     },
     WITHDRAWN: {
         **COMMON_ACTIONS,
     },
+    FORMATTING: {
+        DONE: {
+            FUNC: lambda **kwargs: PUBLISHED,
+        },
+        **COMMON_ACTIONS,
+    },
+    PUBLISHED: {
+        **COMMON_ACTIONS,
+    }
 }
 
 

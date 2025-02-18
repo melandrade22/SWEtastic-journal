@@ -355,7 +355,7 @@ class ReceiveAction(Resource):
         """
         try:
             print(request. json)
-            manu_id = request. json.get(manu.MANU_ID)
+            manu_id = request.json.get(manu.MANU_ID)
             curr_state = request.json.get(manu.CURR_STATE)
             action = request. json.get(manu.ACTION)
             kwargs = {}
