@@ -19,16 +19,17 @@ FIELDS = {
 }
 
 # states:
-AUTHOR_REV = 'AUR' # Author Review
-AUTHOR_REVISION = "ARV" # Author Revision
-COPY_EDIT = 'CED'
+AUTHOR_REV = 'AUR'  # Author Review
+AUTHOR_REVISION = "ARV"  # Author Revision
 IN_REF_REV = 'REV'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
 WITHDRAWN = 'WIT'
-FORMATTING = 'FOR' # additional states
+# Additional states
+FORMATTING = 'FOR'
 PUBLISHED = 'PUB'
-EDITOR_REVIEW = "EDR"
+EDITOR_REVIEW = 'EDR'
+COPY_EDIT = 'CED'
 TEST_STATE = SUBMITTED
 VALID_STATES = [
     AUTHOR_REV,
@@ -39,7 +40,7 @@ VALID_STATES = [
     WITHDRAWN,
     FORMATTING,
     PUBLISHED,
-    EDITOR_REV,
+    EDITOR_REVIEW,
 ]
 
 
@@ -65,7 +66,7 @@ DELETE_REF = 'DRF'
 DONE = 'DON'
 REJECT = 'REJ'
 WITHDRAW = 'WIT'
-ACCEPT_REV = 'ACR' # Accept with revisions
+ACCEPT_REV = 'ACR'  # Accept with revisions
 # for testing:
 TEST_ACTION = ACCEPT
 
@@ -157,7 +158,6 @@ STATE_TABLE = {
         },
         **COMMON_ACTIONS,
     },
-    
     REJECTED: {
         **COMMON_ACTIONS,
     },
