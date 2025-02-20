@@ -139,12 +139,14 @@ STATE_TABLE = {
     AUTHOR_REVISION: {
         DONE: {
             FUNC: lambda **kwargs: EDITOR_REVIEW,
-        }
+        },
+        **COMMON_ACTIONS,
     },
     EDITOR_REVIEW: {
         ACCEPT: {
             FUNC: lambda **kwargs: COPY_EDIT,
-        }
+        },
+        **COMMON_ACTIONS,
     },
     COPY_EDIT: {
         DONE: {
