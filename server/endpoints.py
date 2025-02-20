@@ -153,14 +153,29 @@ class PeopleCreate(Resource):
             affiliation = request.json.get(ppl.AFFILIATION)
             email = request.json.get(ppl.EMAIL)
             roles = request.json.get(ppl.ROLES)
-            ret = ppl.create(name, affiliation, email, roles)
-            # Validate required fields
+
+            # validate required fields
             if not name or not affiliation or not email:
-                raise ValueError("Missing required fields: 'name',"
-                                 + "'affiliation', or 'email'.")
+                raise ValueError(
+                    "Missing required fields"
+                    + "name, email or affiliation"
+                )
+
+            # check for duplicate person by email
+            if ppl.exists(email):
+                raise ValueError(
+                    f"A person with email '{email}' already exists."
+                )
+
+            # create new person
+            ret = ppl.create(name, affiliation, email, roles)
+
+        except ValueError as val_err:
+            return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE
         except Exception as err:
-            raise wz.NotAcceptable(f'This person could not be added: '
-                                   f'{err=}')
+            raise wz.NotAcceptable(
+                f"This person could not be added: {err=}"
+            )
         return {
             MESSAGE: 'This person has been successfully added!',
             RETURN: ret,
