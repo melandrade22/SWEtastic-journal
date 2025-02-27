@@ -11,7 +11,7 @@ from flask_cors import CORS
 import data.people as ppl
 import data.text as txt
 import data.manuscripts as manu
-# import data.roles as rls
+import data.roles as rls
 
 import werkzeug.exceptions as wz
 
@@ -42,6 +42,7 @@ JOURNAL_RESP = 'Journal Title'
 TITLE = "SWEtastic-journal"
 TXT_EP = '/text'
 ROLE_EP = '/role'
+ROLES_EP = '/roles'
 
 
 @api.route(HELLO_EP)
@@ -83,6 +84,18 @@ class JournalTitle(Resource):
         Displays the journal's title
         """
         return {JOURNAL_RESP: TITLE}
+
+
+@api.route(ROLES_EP)
+class Roles(Resource):
+    """
+    This class handles reading person roles
+    """
+    def get(self):
+        """
+        Retrieve the journal person's roles.
+        """
+        return rls.read()
 
 
 @api.route(PEOPLE_EP)
