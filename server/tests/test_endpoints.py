@@ -201,3 +201,31 @@ def test_get_single_manuscript():
 def test_get_nonexistent_manuscript():
     resp = TEST_CLIENT.get(f"{ep.MANU_EP}/NonexistentTitle")
     assert resp.status_code == NOT_FOUND  # Should return 404 for missing manuscript
+
+
+def test_delete_manuscript():
+    test_title = "Sample Manuscript"
+    
+    # create the dummy manuscript to ensure it exists
+    create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+        "title": test_title,
+        "author": "Author Name",
+        "curr_state": "draft",
+        "referees": ["referee1", "referee2"]
+    })
+    assert create_resp.status_code == OK  # ensure the manuscript was created successfully
+    
+    # retrieve the dummy manuscript 
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}")
+    assert resp.status_code == OK  # return 200 to make sure 
+
+    # after, delete the manuscript
+    resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
+    
+    # make sure it returns 200 (successful deletion)
+    assert resp.status_code == 200
+    assert "successfully deleted" in resp.get_json()['message']
+
+    # mmake sure doesn't exist 
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}")
+    assert resp.status_code == NOT_FOUND  # then return 404 after deletion 
