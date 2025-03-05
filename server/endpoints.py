@@ -378,6 +378,34 @@ MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
 })
 
 
+@api.route(MANU_EP)
+class Manuscripts(Resource):
+    """
+    This class handles retrieving all manuscripts.
+    """
+    def get(self):
+        """
+        Retrieve all manuscripts.
+        """
+        return manu.read()
+
+
+@api.route(f'{MANU_EP}/<string:title>')
+class Manuscript(Resource):
+    """
+    This class handles retrieving a specific manuscript by title.
+    """
+    def get(self, title):
+        """
+        Retrieve a manuscript by its title.
+        """
+        manuscript = manu.read_one(title)
+        if manuscript:
+            return manuscript
+        else:
+            raise wz.NotFound(f'No manuscript found with title: {title}')
+
+
 @api.route(f'{MANU_EP}/create')
 class ManuscriptCreate(Resource):
     """
@@ -438,7 +466,7 @@ class ManuscriptDelete(Resource):
                         "not found"}, 404
 
             # delete the manuscript
-            manu.delete(title)  # delete by title 
+            manu.delete(title)  # delete by title
             return {"message": f"Manuscript '{title}'" +
                     "successfully deleted"}, 200
 
