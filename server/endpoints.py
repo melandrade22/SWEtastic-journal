@@ -360,16 +360,26 @@ class Masthead(Resource):
     def get(self):
         return {MASTHEAD: ppl.get_masthead()}
 
+
 # Define model for creating a new Manuscript entry
 MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
-    manu.TITLE: fields.String(required=True,
-                           description="Unique title for the manuscript"),
-    manu.AUTHOR: fields.String(required=True, description="Current state of the manuscript"),
-    manu.CURR_STATE: fields.String(required=True, description="Current state of the manuscript"),
+    manu.TITLE: fields.String(
+        required=True,
+        description="Unique title for the manuscript"
+    ),
+    manu.AUTHOR: fields.String(
+        required=True,
+        description="Author of the manuscript"
+    ),
+    manu.CURR_STATE: fields.String(
+        required=True,
+        description="Current state of the manuscript"
+    ),
 })
+
+
 @api.route(f'{MANU_EP}/create')
 class ManuscriptCreate(Resource):
-    
     """
     Create a Manuscript Object
     """
@@ -381,8 +391,7 @@ class ManuscriptCreate(Resource):
             title = request.json.get(manu.TITLE)
             author = request.json.get(manu.AUTHOR)
             curr_state = request.json.get(manu.CURR_STATE)
-            referees = request.json.get(manu.REFEREES) 
-
+            referees = request.json.get(manu.REFEREES)
             # validate required fields
             if not title or not author or not curr_state:
                 raise ValueError(
