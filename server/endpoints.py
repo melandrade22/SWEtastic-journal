@@ -438,13 +438,16 @@ class ManuscriptCreate(Resource):
         except ValueError as val_err:
             return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE
         except Exception as err:
-            raise wz.NotAcceptable(
-                f"This manuscript could not be created: {err=}"
-            )
+            # raise wz.NotAcceptable(
+            #     f"This manuscript could not be created: {err=}"
+            # )
+            return {"message":
+                    f"This manuscript could not be created: err={str(err)}"
+                    }, 500
         return {
             MESSAGE: 'This manuscript has been successfully created!',
             RETURN: ret,
-        }
+        }, 200
 
 
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {

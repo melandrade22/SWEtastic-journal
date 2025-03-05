@@ -197,6 +197,22 @@ def test_get_single_manuscript():
         assert "title" in resp_json
         assert resp_json["title"] == test_title
 
+def test_create_manuscript():
+    test_title = "Sample Manuscript"
+    # Stub dummy Manuscript object
+    create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+        "title": test_title,
+        "author": "Author Name",
+        "curr_state": "draft",
+        "referees": ["referee1", "referee2"]
+    })
+    assert create_resp.status_code == OK  # ensure the manuscript was created successfully
+    # retrieve the dummy manuscript 
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}")
+    assert resp.status_code == OK  # return 200 to make sure 
+    # Delete to clear Manuscript object from DB
+    resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
+
 
 def test_get_nonexistent_manuscript():
     resp = TEST_CLIENT.get(f"{ep.MANU_EP}/NonexistentTitle")
