@@ -476,10 +476,11 @@ class ManuscriptDelete(Resource):
         except Exception as err:
             return {"message": f"Error: {str(err)}"}, 500
 
+
 @api.route(f'{MANU_EP}/<string:title>/update/<string:action_taken>')
 class ManuscriptUpdateState(Resource):
     """
-    Parameters: 
+    Parameters:
     title -> unique title identifier to a manuscript object
     action_taken -> an action taken from the current state of the
     manuscript, FSM will handle actions to the next state
@@ -493,7 +494,7 @@ class ManuscriptUpdateState(Resource):
                         "not found"}, 404
 
             # update the manuscript
-            manu.update_manuscript_state(title, action_taken)  # delete by title
+            manu.update_manuscript_state(title, action_taken)
             return {"message": f"Manuscript '{title}'" +
                     "successfully updated"}, 200
 

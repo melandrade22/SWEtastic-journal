@@ -151,12 +151,16 @@ def update_manuscript_state(title: str, action: str, **kwargs):
     curr_state = manu_obj[CURR_STATE]
     try:
         # Shift to new state if valid
-        new_state = handle_action(manu_obj[MANU_ID], curr_state, action, **kwargs)
+        new_state = handle_action(
+            manu_obj[MANU_ID],
+            curr_state,
+            action,
+            **kwargs
+        )
         # Reflect Manuscript state changes in database
         dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
 
         return f"Manuscript '{title}' updated to state '{new_state}'"
-    
     except ValueError as e:
         return str(e)  # Return the specific error message
 
@@ -241,10 +245,12 @@ def get_valid_actions_by_state(state: str):
     print(f'{valid_actions=}')
     return valid_actions
 
+
 def read() -> dict:
     # Return all instances of Manuscript objects
     manus = dbc.read_dict(MANU_COLLECT, TITLE)
     return manus
+
 
 def read_one(title: str):
     """
