@@ -136,27 +136,20 @@ def delete(title: str) -> str:
     else:
         return f"No manuscript found with title: {title}"
 
-
-def update_manuscript_state(title: str, action: str, **kwargs):
+def update_manuscript_state(title: str, new_state: str):
     """
-    Updates the manuscript curr_state based on the given action
+    Updates the manuscript curr_state to new_state
     title -> title of the manuscript
-    action_taken -> action taken from curr_state of manuscript
+    new_state -> new state to change curr_state to
     returns -> a string of updated state or error message
     """
     manu_obj = read_one(title)
 
     if not manu_obj:
         return f"No manuscript found with title: {title}"
-    curr_state = manu_obj[CURR_STATE]
+    if not is_valid_state(new_state):
+        return f"New state {new_state} is not a valid state"
     try:
-        # Shift to new state if valid
-        new_state = handle_action(
-            manu_obj[MANU_ID],
-            curr_state,
-            action,
-            **kwargs
-        )
         # Reflect Manuscript state changes in database
         dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
 
@@ -274,12 +267,12 @@ def is_valid_manuscript(title):
 
 
 # Create a manuscript object
-def create(title: str, author: str, curr_state, referees=[]):
+def create(title: str, author: str, referees=[]):
     if is_valid_manuscript(title):
         contents = {
             TITLE: title,
             AUTHOR: author,
-            CURR_STATE: curr_state,
+            CURR_STATE: SUBMITTED, # SUBMITTED by default
             REFEREES: referees
         }
         dbc.insert_one(MANU_COLLECT, contents)

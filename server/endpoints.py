@@ -371,10 +371,6 @@ MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
         required=True,
         description="Author of the manuscript"
     ),
-    manu.CURR_STATE: fields.String(
-        required=True,
-        description="Current state of the manuscript"
-    ),
 })
 
 
@@ -418,13 +414,12 @@ class ManuscriptCreate(Resource):
         try:
             title = request.json.get(manu.TITLE)
             author = request.json.get(manu.AUTHOR)
-            curr_state = request.json.get(manu.CURR_STATE)
             referees = request.json.get(manu.REFEREES)
             # validate required fields
-            if not title or not author or not curr_state:
+            if not title or not author:
                 raise ValueError(
                     "Missing required fields"
-                    + "title, author, curr_state or referees"
+                    + "title or author"
                 )
 
             # check for duplicate person by title
@@ -433,14 +428,11 @@ class ManuscriptCreate(Resource):
                     f"A manuscript with title '{title}' already exists."
                 )
             # create new title
-            ret = manu.create(title, author, curr_state, referees)
+            ret = manu.create(title, author, referees)
 
         except ValueError as val_err:
             return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE
         except Exception as err:
-            # raise wz.NotAcceptable(
-            #     f"This manuscript could not be created: {err=}"
-            # )
             return {"message":
                     f"This manuscript could not be created: err={str(err)}"
                     }, 500
@@ -477,26 +469,29 @@ class ManuscriptDelete(Resource):
             return {"message": f"Error: {str(err)}"}, 500
 
 
-@api.route(f'{MANU_EP}/<string:title>/update/<string:action_taken>')
+@api.route(f'{MANU_EP}/<string:title>/update/<string:new_state>')
 class ManuscriptUpdateState(Resource):
     """
     Parameters:
     title -> unique title identifier to a manuscript object
-    action_taken -> an action taken from the current state of the
-    manuscript, FSM will handle actions to the next state
+    new_state -> new state to set the curr_state of a manuscript to
     """
-    def put(self, title, action_taken):
+    def put(self, title, new_state):
         try:
             # retrieve manuscript by title
             manu_obj = manu.read_one(title)
             if not manu_obj:
                 return {"message": f"Manuscript with title '{title}'" +
                         "not found"}, 404
+            # verify valid state
+            if not manu.is_valid_state(new_state):
+                return {"message": f"Manuscript: '{title}'" +
+                        "attempted to change to invalid state"}, 404
 
             # update the manuscript
-            manu.update_manuscript_state(title, action_taken)
+            manu.update_manuscript_state(title, new_state)
             return {"message": f"Manuscript '{title}'" +
-                    "successfully updated"}, 200
+                    "state successfully updated"}, 200
 
         except Exception as err:
             return {"message": f"Error: {str(err)}"}, 500
