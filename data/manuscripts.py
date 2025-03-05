@@ -1,3 +1,4 @@
+import data.db_connect as dbc
 ACTION = 'action'
 AUTHOR = 'author'
 CURR_STATE = 'curr_state'
@@ -11,11 +12,25 @@ TEST_ID = 'fake_id'
 TEST_FLD_NM = TITLE
 TEST_FLD_DISP_NM = 'Title'
 
+MANU_COLLECT = 'manuscript'
+
+# Make the connection
+client = dbc.connect_db()
+print(f"{client=}")
 
 FIELDS = {
     TITLE: {
         DISP_NAME: TEST_FLD_DISP_NM,
     },
+    AUTHOR: {
+        
+    },
+    REFEREES: {
+
+    },
+    CURR_STATE: {
+
+    }
 }
 
 # states:
@@ -49,6 +64,7 @@ SAMPLE_MANU = {
     AUTHOR: 'Eugene Callahan',
     REFEREES: [],
 }
+
 
 
 def get_states() -> list:
@@ -183,6 +199,38 @@ def get_valid_actions_by_state(state: str):
     print(f'{valid_actions=}')
     return valid_actions
 
+def read_one(title: str):
+    """
+    Return a Manuscript record if title of present in DB,
+    else None.
+    """
+    return dbc.read_one(MANU_COLLECT, {TITLE: title})
+
+def exists(title: str) -> bool:
+    return read_one(title) is not None
+
+def is_valid_manuscript(title): 
+    """
+    Returns object if the title is unique
+    Otherwise, return None
+    """
+    # Ensure that this manuscript title is unique
+    return read_one(title) is None
+
+# Create a manuscript object
+def create(title: str, author: str, curr_state, referees = []):
+    if is_valid_manuscript(title):
+        contents = {
+            TITLE: title,
+            AUTHOR: author,
+            CURR_STATE: curr_state,
+            REFEREES: referees
+        }
+        dbc.insert_one(MANU_COLLECT, contents)
+        print("Manuscript created and added to DB:", contents)
+        return contents
+    print(f"Manuscript with title '{title}' failed to add to DB")
+    return None
 
 def handle_action(manu_id, curr_state, action, **kwargs) -> str:
     kwargs['manu'] = SAMPLE_MANU

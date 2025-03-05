@@ -360,6 +360,55 @@ class Masthead(Resource):
     def get(self):
         return {MASTHEAD: ppl.get_masthead()}
 
+# Define model for creating a new Manuscript entry
+MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
+    manu.TITLE: fields.String(required=True,
+                           description="Unique title for the manuscript"),
+    manu.AUTHOR: fields.String(required=True, description="Current state of the manuscript"),
+    manu.CURR_STATE: fields.String(required=True, description="Current state of the manuscript"),
+})
+@api.route(f'{MANU_EP}/create')
+class ManuscriptCreate(Resource):
+    
+    """
+    Create a Manuscript Object
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    @api.expect(MANU_CREATE_FLDS)
+    def put(self):
+        try:
+            title = request.json.get(manu.TITLE)
+            author = request.json.get(manu.AUTHOR)
+            curr_state = request.json.get(manu.CURR_STATE)
+            referees = request.json.get(manu.REFEREES) 
+
+            # validate required fields
+            if not title or not author or not curr_state:
+                raise ValueError(
+                    "Missing required fields"
+                    + "title, author, curr_state or referees"
+                )
+
+            # check for duplicate person by email
+            if manu.exists(title):
+                raise ValueError(
+                    f"A manuscript with title '{title}' already exists."
+                )
+            # create new person
+            ret = manu.create(title, author, curr_state, referees)
+
+        except ValueError as val_err:
+            return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE
+        except Exception as err:
+            raise wz.NotAcceptable(
+                f"This manuscript could not be created: {err=}"
+            )
+        return {
+            MESSAGE: 'This manuscript has been successfully created!',
+            RETURN: ret,
+        }
+
 
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
     manu.MANU_ID: fields.String,
