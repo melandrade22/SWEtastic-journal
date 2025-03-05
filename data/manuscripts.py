@@ -112,6 +112,28 @@ def delete_ref(manu: dict, referee: str) -> str:
         return SUBMITTED
 
 
+def delete(title: str) -> str:
+    """
+    Deletes a manuscript by its title from the database.
+    If the title is not found, return a message indicating so.
+
+    Args:
+    title (str): The title of the manuscript to delete.
+
+    Returns:
+        str: A message indicating the result of the deletion.
+    """
+    # retrieve the manuscript by title
+    manu_obj = read_one(title)
+    if manu_obj:
+        # delete the manuscript from the database
+        dbc.del_one(MANU_COLLECT, {TITLE: title})
+        # delete from the database using the title
+        return f"Deleted manuscript with title: {title}"
+    else:
+        return f"No manuscript found with title: {title}"
+
+
 FUNC = 'f'
 
 COMMON_ACTIONS = {

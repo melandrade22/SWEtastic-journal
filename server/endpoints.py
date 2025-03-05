@@ -427,6 +427,25 @@ MANU_ACTION_FLDS = api.model('ManuscriptAction', {
 })
 
 
+@api.route(f'{MANU_EP}/<string:title>/delete')
+class ManuscriptDelete(Resource):
+    def delete(self, title):
+        try:
+            # retrieve manuscript by title
+            manu_obj = manu.read_one(title)
+            if not manu_obj:
+                return {"message": f"Manuscript with title '{title}'" +
+                        "not found"}, 404
+
+            # delete the manuscript
+            manu.delete(title)  # delete by title 
+            return {"message": f"Manuscript '{title}'" +
+                    "successfully deleted"}, 200
+
+        except Exception as err:
+            return {"message": f"Error: {str(err)}"}, 500
+
+
 @api.route(f'{MANU_EP}/receive_action')
 class ReceiveAction(Resource):
     """
