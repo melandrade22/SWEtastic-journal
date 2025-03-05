@@ -390,12 +390,12 @@ class ManuscriptCreate(Resource):
                     + "title, author, curr_state or referees"
                 )
 
-            # check for duplicate person by email
+            # check for duplicate person by title
             if manu.exists(title):
                 raise ValueError(
                     f"A manuscript with title '{title}' already exists."
                 )
-            # create new person
+            # create new title
             ret = manu.create(title, author, curr_state, referees)
 
         except ValueError as val_err:
