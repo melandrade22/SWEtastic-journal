@@ -178,3 +178,25 @@ def test_get_masthead():
     
     masthead = resp_json[ep.MASTHEAD]
     assert isinstance(masthead, dict), f"Masthead should be a dictionary, got {type(masthead)}" 
+
+
+def test_get_all_manuscripts():
+    resp = TEST_CLIENT.get(ep.MANUSCRIPTS_EP)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)  # Expecting a dictionary of manuscripts
+
+
+def test_get_single_manuscript():
+    test_title = "Sample Manuscript"
+    resp = TEST_CLIENT.get(f"{ep.MANUSCRIPTS_EP}/{test_title}")
+    assert resp.status_code in [OK, NOT_FOUND]  # If manuscript exists, should return 200, otherwise 404
+    if resp.status_code == OK:
+        resp_json = resp.get_json()
+        assert "title" in resp_json
+        assert resp_json["title"] == test_title
+
+
+def test_get_nonexistent_manuscript():
+    resp = TEST_CLIENT.get(f"{ep.MANUSCRIPTS_EP}/NonexistentTitle")
+    assert resp.status_code == NOT_FOUND  # Should return 404 for missing manuscript
