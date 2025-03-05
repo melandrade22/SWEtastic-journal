@@ -136,6 +136,7 @@ def delete(title: str) -> str:
     else:
         return f"No manuscript found with title: {title}"
 
+
 def update_manuscript_state(title: str, new_state: str):
     """
     Updates the manuscript curr_state to new_state
@@ -272,7 +273,7 @@ def create(title: str, author: str, referees=[]):
         contents = {
             TITLE: title,
             AUTHOR: author,
-            CURR_STATE: SUBMITTED, # SUBMITTED by default
+            CURR_STATE: SUBMITTED,  # SUBMITTED by default
             REFEREES: referees
         }
         dbc.insert_one(MANU_COLLECT, contents)
