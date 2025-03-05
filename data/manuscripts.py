@@ -34,12 +34,13 @@ IN_REF_REV = 'REV'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
 WITHDRAWN = 'WIT'
-# Additional states
 FORMATTING = 'FOR'
 PUBLISHED = 'PUB'
 EDITOR_REVIEW = 'EDR'
 COPY_EDIT = 'CED'
+
 TEST_STATE = SUBMITTED
+
 VALID_STATES = [
     AUTHOR_REV,
     COPY_EDIT,
@@ -50,6 +51,8 @@ VALID_STATES = [
     FORMATTING,
     PUBLISHED,
     EDITOR_REVIEW,
+    AUTHOR_REVISION,
+    IN_REF_REV,
 ]
 
 
@@ -134,6 +137,30 @@ def delete(title: str) -> str:
         return f"No manuscript found with title: {title}"
 
 
+def update_manuscript_state(title: str, action: str, **kwargs):
+    """
+    Updates the manuscript curr_state based on the given action
+    title -> title of the manuscript
+    action_taken -> action taken from curr_state of manuscript
+    returns -> a string of updated state or error message
+    """
+    manu_obj = read_one(title)
+
+    if not manu_obj:
+        return f"No manuscript found with title: {title}"
+    curr_state = manu_obj[CURR_STATE]
+    try:
+        # Shift to new state if valid
+        new_state = handle_action(manu_obj[MANU_ID], curr_state, action, **kwargs)
+        # Reflect Manuscript state changes in database
+        dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
+
+        return f"Manuscript '{title}' updated to state '{new_state}'"
+    
+    except ValueError as e:
+        return str(e)  # Return the specific error message
+
+
 FUNC = 'f'
 
 COMMON_ACTIONS = {
@@ -214,6 +241,10 @@ def get_valid_actions_by_state(state: str):
     print(f'{valid_actions=}')
     return valid_actions
 
+def read() -> dict:
+    # Return all instances of Manuscript objects
+    manus = dbc.read_dict(MANU_COLLECT, TITLE)
+    return manus
 
 def read_one(title: str):
     """
