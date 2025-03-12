@@ -386,6 +386,21 @@ class Manuscripts(Resource):
         return manu.read()
 
 
+@api.route(f'{MANU_EP}/all_manuscripts')
+class Manuscript(Resource):
+    """
+    This class handles retrieving all existing manuscripts.
+    """
+    def get(self):
+        """
+        Retrieve all existing manuscripts.
+        """
+        manuscripts = manu.read()
+        if manuscripts:
+            return manuscripts
+        else:
+            raise wz.NotFound(f'Attempt to read all manuscripts failed')
+
 @api.route(f'{MANU_EP}/<string:title>')
 class Manuscript(Resource):
     """
