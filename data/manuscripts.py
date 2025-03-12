@@ -292,6 +292,26 @@ def handle_action(manu_id, curr_state, action, **kwargs) -> str:
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
 
 
+def search_manuscripts(query: str):
+    """
+    Searches for manuscripts where the title or author
+    contains the query string.
+    Args:
+        query (str): The search query.
+    Returns:
+        list: A list of matching manuscripts.
+    """
+    search_filter = {
+        "$or": [
+            # Case-insensitive search in title
+            {TITLE: {"$regex": query, "$options": "i"}},
+            # Case-insensitive search in author
+            {AUTHOR: {"$regex": query, "$options": "i"}}
+        ]
+    }
+    return list(dbc.read_all(MANU_COLLECT, search_filter))
+
+
 def main():
     print(handle_action(TEST_ID, SUBMITTED, ASSIGN_REF, ref='Jack'))
     print(handle_action(TEST_ID, IN_REF_REV, ASSIGN_REF,
