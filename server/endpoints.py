@@ -4,7 +4,7 @@ The endpoint called `endpoints` will return all available endpoints.
 """
 from http import HTTPStatus
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restx import Resource, Api, fields  # Namespace, fields
 from flask_cors import CORS
 
@@ -539,3 +539,13 @@ class ReceiveAction(Resource):
             MESSAGE: 'Action received!',
             RETURN: ret,
         }
+
+
+@app.route("/manuscripts/search", methods=["GET"])
+def search():
+    query = request.args.get("query", "")
+    if not query:
+        return jsonify({"error": "Query parameter is required"}), 400
+
+    results = manu.search_manuscripts(query)
+    return jsonify(results)
