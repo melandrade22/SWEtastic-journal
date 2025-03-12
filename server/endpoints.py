@@ -387,7 +387,7 @@ class Manuscripts(Resource):
 
 
 @api.route(f'{MANU_EP}/all_manuscripts')
-class Manuscript(Resource):
+class ManuscriptReadAll(Resource):
     """
     This class handles retrieving all existing manuscripts.
     """
@@ -399,10 +399,11 @@ class Manuscript(Resource):
         if manuscripts:
             return manuscripts
         else:
-            raise wz.NotFound(f'Attempt to read all manuscripts failed')
+            raise wz.NotFound('Attempt to read all manuscripts failed')
+
 
 @api.route(f'{MANU_EP}/<string:title>')
-class Manuscript(Resource):
+class ManuscriptReadOne(Resource):
     """
     This class handles retrieving a specific manuscript by title.
     """
