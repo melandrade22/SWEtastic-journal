@@ -4,7 +4,7 @@ The endpoint called `endpoints` will return all available endpoints.
 """
 from http import HTTPStatus
 
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_restx import Resource, Api, fields  # Namespace, fields
 from flask_cors import CORS
 
@@ -541,11 +541,29 @@ class ReceiveAction(Resource):
         }
 
 
-@app.route("/manuscripts/search", methods=["GET"])
-def search():
-    query = request.args.get("query", "")
-    if not query:
-        return jsonify({"error": "Query parameter is required"}), 400
+@api.route(f'{MANU_EP}/search')
+class SearchManuscripts(Resource):
+    """
+    Search for manuscripts.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Query parameter is required')
+    @api.response(HTTPStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error')
+    def get(self):
+        """
+        Search for manuscripts based on a query.
+        """
+        query = request.args.get("query", "").strip()
 
-    results = manu.search_manuscripts(query)
-    return jsonify(results)
+        if not query:
+            return {'error': 'Query parameter is required'},
+        HTTPStatus.BAD_REQUEST
+
+        try:
+            print(f"Received search query: {query}")  # Debugging log
+            results = manu.search_manuscripts(query)
+            return results, HTTPStatus.OK
+        except Exception as err:
+            print(f"Search error: {err}")
+            return {'error': f'Internal Server Error: {str(err)}'},
+        HTTPStatus.INTERNAL_SERVER_ERROR
