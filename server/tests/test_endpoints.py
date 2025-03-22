@@ -245,3 +245,22 @@ def test_delete_manuscript():
     # mmake sure doesn't exist 
     resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}")
     assert resp.status_code == NOT_FOUND  # then return 404 after deletion 
+
+
+def test_search_manuscripts():
+    query = "Sample"
+    
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/search?query={query}")
+    assert resp.status_code in [OK, 500], f"Unexpected status code: {resp.status_code}"
+
+    resp_json = resp.get_json()
+
+    if resp.status_code == 500:
+        # Log and allow the test to fail with a useful message
+        assert "error" in resp_json, "Expected an 'error' key in a 500 response"
+        pytest.fail(f"Search failed: {resp_json['error']}")
+
+    # assert isinstance(resp_json, list), f"Expected a list, got {type(resp_json)}"
+    # for manuscript in resp_json:
+    #     assert "title" in manuscript, "Missing 'title' key in manuscript response"
+    #     assert isinstance(manuscript["title"], str), "'title' should be a string"
