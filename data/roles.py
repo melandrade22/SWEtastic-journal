@@ -137,6 +137,18 @@ def has_role(email: str, code: str) -> bool:
     return False
 
 
+def get_emails_with_role(code: str) -> list:
+    """
+    Returns a list of emails of all people who have a specific role.
+    """
+    people = ppl.read()
+    emails = []
+    for email, person in people.items():
+        if code in person.get('roles', []):
+            emails.append(email)
+    return emails
+
+
 def main():
     print(get_roles())
     print(get_masthead_roles())
