@@ -76,11 +76,17 @@ def test_is_valid_key():
     assert rls.is_valid_key(key)
 
 
-def test_role_not_in_use(temp_person):
-    assert rls.is_in_use('ME') is False
+def test_role_not_in_use_in_db():
+    assert rls.is_in_use('CSE') is False
 
 
-def test_role_in_use(temp_person):
+def test_role_in_use_in_db():
     assert rls.is_in_use('AU') is True
 
 
+def test_has_role(temp_person):
+    assert rls.has_role(temp_person,"ME") is False
+
+
+def test_no_has_role(temp_person):
+    assert rls.has_role(temp_person,"AU") is True

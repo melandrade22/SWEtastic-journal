@@ -126,6 +126,17 @@ def get_role_codes() -> list:
     return list(ROLES.keys())
 
 
+def has_role(email: str, code: str) -> bool:
+    """
+    Checks if a specific person(by email) has the given role
+    """
+    people = ppl.read()
+    person = people.get(email)
+    if person is not None and code in person.get('roles', []):
+        return True
+    return False
+
+
 def main():
     print(get_roles())
     print(get_masthead_roles())
