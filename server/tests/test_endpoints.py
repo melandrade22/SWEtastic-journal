@@ -15,6 +15,8 @@ from data.people import NAME
 
 import data.people as ppl
 
+import data.manuscripts as manu
+
 import server.endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
@@ -264,3 +266,21 @@ def test_search_manuscripts():
     # for manuscript in resp_json:
     #     assert "title" in manuscript, "Missing 'title' key in manuscript response"
     #     assert isinstance(manuscript["title"], str), "'title' should be a string"
+
+def test_update_manuscript_title():
+     # Stub dummy Manuscript object
+    test_title = "DUMMY_MANUSCRIPT"
+    new_state = manu.VALID_STATES[0] # Pick a valid state to set it to (Randomize selected state?)
+    create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+        "title": test_title,
+        "author": "Author Name",
+        "curr_state": "draft",
+        "referees": ["referee1", "referee2"]
+    })
+    assert create_resp.status_code == OK  # ensure successful creation
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}") # retrieve the dummy manuscript 
+    assert resp.status_code == OK  # return 200 to make sure 
+    update_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/update/{new_state}")
+    assert update_resp.status_code == OK # Verify update successful
+    # Delete to clear Manuscript object from DB
+    resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
