@@ -383,18 +383,6 @@ class Manuscripts(Resource):
         """
         Retrieve all manuscripts.
         """
-        return manu.read()
-
-
-@api.route(f'{MANU_EP}/all_manuscripts')
-class ManuscriptReadAll(Resource):
-    """
-    This class handles retrieving all existing manuscripts.
-    """
-    def get(self):
-        """
-        Retrieve all existing manuscripts.
-        """
         manuscripts = manu.read()
         if manuscripts:
             return manuscripts
