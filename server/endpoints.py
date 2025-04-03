@@ -12,6 +12,8 @@ import data.people as ppl
 import data.text as txt
 import data.manuscripts as manu
 import data.roles as rls
+import data.users as usr
+
 
 import werkzeug.exceptions as wz
 
@@ -555,3 +557,34 @@ class SearchManuscripts(Resource):
             print(f"Search error: {err}")
             return {'error': f'Internal Server Error: {str(err)}'},
         HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+REGISTER_FIELDS = api.model('RegisterNewUser', {
+    'name': fields.String(required=True, description='Full name of the user'),
+    'email': fields.String(required=True,
+                           description='User email (must be unique)'),
+    'password': fields.String(required=True, description='Password for login'),
+})
+
+
+@api.route('/register')
+class Register(Resource):
+    @api.expect(REGISTER_FIELDS)
+    def post(self):
+        data = request.json
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
+
+        if not all([name, email, password]):
+            return {"message": "Missing required fields."}, 400
+
+        try:
+            user = usr.create_user(email, name, password)
+        except ValueError as ve:
+            return {"message": str(ve)}, 400
+
+        return {
+            "user": {usr.EMAIL: user[usr.EMAIL],
+                     usr.NAME: user[usr.NAME]}
+        }, 201

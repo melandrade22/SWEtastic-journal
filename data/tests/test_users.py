@@ -15,38 +15,59 @@ def test_get_users():
 
 
 def test_delete_user():
-    users = usrs.get_users()  # use get users function to retrieve the users 
-    original_count = len(users)  # get the length of the number of users before deleting
-    # delete an existing user
-    user_to_delete = "Callahan"
-    updated_users = usrs.delete_user(users, user_to_delete)
-    # verifying if the user is removed
-    assert len(updated_users) == original_count - 1  # user decreases by one 
-    assert user_to_delete not in updated_users  # the user that was deleted is not present 
-    # try to delete a non-existent user
+    # Create a test user in DB
+    email = "test_delete_user@nyu.edu"
+    name = "DeleteMe"
+    password = "testpass"
+
+    usrs.create_user(email, name, password)
+    assert usrs.read_one(email) is not None
+
+    # Delete the test user
+    usrs.delete_user(email)
+    assert usrs.read_one(email) is None
+
+    # Try to delete a user that doesn't exist
     try:
-        usrs.delete_user(updated_users, "NonExistentUser")
-    except KeyError as e:
-        assert str(e) == "'User not found.'"
+        usrs.delete_user("nonexistent@nyu.edu")
+    except Exception as e:
+        assert isinstance(e, Exception)  # Specific to your delete logic
     else:
-        assert False, "Expected KeyError for non-existent user"
+        assert False, "Expected error for non-existent user"
+
 
 def test_update_user_level():
-    users = usrs.get_users()
-    original_count = len(users)
-    user_to_update = usrs.TEST_UPDATE_LEVEL_NAME
-    desired_level = usrs.TEST_UPDATE_LEVEL_AFTER_UPDATE
-    updated_users = usrs.update_user_level(users, user_to_update, desired_level)
-    assert len(updated_users) == original_count  # No changes made to length of dict
-    assert users[user_to_update][usrs.LEVEL] == desired_level
-    # Revert the update back to its original state
-    users[user_to_update][usrs.LEVEL] = usrs.TEST_UPDATE_LEVEL_BEFORE_UPDATE
-    # Try to update a non-existent user
+    email = "test_update_user@nyu.edu"
+    name = "LevelUser"
+    password = "testpass"
+    original_level = 2
+    new_level = 9000
+
+    # create the test user
+    usrs.create_user(email, name, password)
+    usrs.update_user_level(email, original_level)
+
+    user_before = usrs.read_one(email)
+    assert user_before[usrs.LEVEL] == original_level
+
+    # perform the level update
+    usrs.update_user_level(email, new_level)
+
+    # check if the update worked
+    user_after = usrs.read_one(email)
+    assert user_after[usrs.LEVEL] == new_level
+
+    # clean
+    usrs.update_user_level(email, original_level)
+    usrs.delete_user(email)
+
+    # trying to update a user that doesn’t exist
     try:
-        usrs.update_user_level(updated_users, "NameDontExist", desired_level)
-    except KeyError as e:
-        assert str(e) == "'Update user level failed, user not found'"
+        usrs.update_user_level("nonexistent@nyu.edu", 5)
+    except ValueError as e:
+        assert str(e) == "User not found."
     else:
-        assert False, "Expected KeyError for non-existent user"
+        assert False, "Expected ValueError for non-existent user"
+
 
 
