@@ -588,3 +588,44 @@ class Register(Resource):
             "user": {usr.EMAIL: user[usr.EMAIL],
                      usr.NAME: user[usr.NAME]}
         }, 201
+
+
+LOGIN_FIELDS = api.model('UserLogin', {
+    'email': fields.String(required=True, description='User email'),
+    'password': fields.String(required=True, description='User password'),
+})
+
+
+@api.route('/login')
+class Login(Resource):
+    @api.expect(LOGIN_FIELDS)
+    def post(self):
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
+
+        if usr.authenticate(email, password):
+            user = usr.read_one(email)
+            return {
+                "message": f"Welcome back, {user[usr.NAME]}!",
+                "level": user.get(usr.LEVEL, 0)
+            }, 200
+        else:
+            return {"message": "Invalid credentials."}, 401
+
+
+@api.route('/users')
+class AllUsers(Resource):
+    def get(self):
+        users = usr.read_all()
+
+        # Optional: exclude sensitive data like password
+        sanitized_users = {
+            email: {
+                usr.NAME: user.get(usr.NAME),
+                usr.LEVEL: user.get(usr.LEVEL)
+            }
+            for email, user in users.items()
+        }
+
+        return {"users": sanitized_users}, 200
