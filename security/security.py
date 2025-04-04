@@ -1,3 +1,4 @@
+from flask import request, abort
 from functools import wraps
 
 # import data.db_connect as dbc
@@ -100,3 +101,19 @@ def read_feature(feature_name: str) -> dict:
         return security_recs[feature_name]
     else:
         return None
+
+
+def require_permission(feature: str, operation: str):
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            user_email = request.headers.get("X-User-Email")  # or however you pass identity info
+            rec = security_recs.get(feature, {}).get(operation, {})
+            allowed_users = rec.get(USER_LIST, [])
+
+            if user_email not in allowed_users:
+                abort(403, description="Access denied")
+
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
