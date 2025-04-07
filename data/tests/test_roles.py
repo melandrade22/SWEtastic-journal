@@ -49,7 +49,7 @@ def test_is_valid():
     assert rls.is_valid(rls.TEST_CODE)
 
 
-def test_delete_rl_in_dict():
+def test_delete_rl_in_dict(mock_people):
     rls_before = rls.get_roles()
     original_length = len(rls_before)
     rls.delete_role(rls.CE_CODE)

@@ -155,13 +155,22 @@ def update_roles(email: str, roles: list):
 
 def add_role(email: str, role: str):
     """
-    Add a role to an existing person
+    Add a role to an existing person, prevent multiple masthead roles
     """
     if not exists(email):
         raise ValueError(f'Person with {email} not found')
     if role not in rls.ROLES:
         raise KeyError(f"The role {role} doesn't exist")
     person_roles = read_roles(email)
+    masthead_roles = set(rls.get_masthead_roles().keys())
+
+    # Check for masthead role conflicts
+    if role in masthead_roles:
+        for existing_role in person_roles:
+            if existing_role in masthead_roles:
+                raise ValueError(
+                    "Can't assign more than one editor role"
+                    )
     if role not in person_roles:
         person_roles.append(role)
         update_roles(email, person_roles)

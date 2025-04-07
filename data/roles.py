@@ -16,14 +16,21 @@ TEST_CODE = AUTHOR_CODE
 ED_CODE = 'ED'
 ME_CODE = 'ME'
 CE_CODE = 'CE'
-RE_CODE = 'RE'
+REF_CODE = 'RE'
+DE_CODE = 'DE'
+REV_CODE = 'RE'
+ASME_CODE = 'AE'
+
 
 ROLES = {
     AUTHOR_CODE: 'Author',
     ED_CODE: 'Editor',
-    RE_CODE: 'Referee',
+    REF_CODE: 'Referee',
     ME_CODE: 'Managing Editor',
     CE_CODE: 'Consulting Editor',
+    DE_CODE: 'Deputy Editor',
+    REV_CODE: 'Reviews Editor',
+    ASME_CODE: 'Assistant Managing Editor',
 }
 ROLE_IDX = 'roles'
 
@@ -32,6 +39,9 @@ MH_ROLES = [
     ED_CODE,
     ME_CODE,
     CE_CODE,
+    DE_CODE,
+    REV_CODE,
+    ASME_CODE,
 ]
 
 

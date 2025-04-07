@@ -249,6 +249,7 @@ def test_add_role(temp_person):
     assert 'AU' in new_roles
     assert 'ME' in new_roles
 
+
 def test_add_bad_role(temp_person):
     old_roles = ppl.read_roles(temp_person)
     assert 'AU' in old_roles
@@ -257,6 +258,21 @@ def test_add_bad_role(temp_person):
     new_roles = ppl.read_roles(temp_person)
     assert 'AU' in new_roles
     assert 'MEL' not in new_roles
+
+
+def test_add_extra_editor(temp_person):
+    old_roles = ppl.read_roles(temp_person)
+    assert 'AU' in old_roles
+    ppl.add_role(temp_person,'ME')
+    roles = ppl.read_roles(temp_person)
+    assert 'AU' in roles
+    assert 'ME' in roles
+    with pytest.raises(ValueError):
+        ppl.add_role(temp_person,"DE")
+    new_roles = ppl.read_roles(temp_person)
+    assert 'AU' in new_roles
+    assert 'ME' in new_roles
+    assert 'DE' not in new_roles
 
 
 def test_add_role_wth_same_role(temp_person):
