@@ -57,9 +57,14 @@ DELETE = 'delete'
 USER_LIST = 'user_list'
 CHECKS = 'checks'
 LOGIN = 'login'
+LOGIN_KEY = 'login_key'
 
 # Features:
 PEOPLE = 'people'
+BAD_FEATURE = 'baaaad feature'
+
+PEOPLE_MISSING_ACTION = READ
+GOOD_USER_ID = 'ejc369@nyu.edu'
 
 security_recs = None
 # These will come from the DB soon:
@@ -72,6 +77,25 @@ temp_recs = {
             },
         },
     },
+}
+
+
+def is_valid_key(user_id: str, login_key: str):
+    """
+    This is just a mock of the real is_valid_key() we'll write later.
+    """
+    return True
+
+
+def check_login(user_id: str, **kwargs):
+    if LOGIN_KEY not in kwargs:
+        return False
+    return is_valid_key(user_id, kwargs[LOGIN_KEY])
+
+
+CHECK_FUNCS = {
+    LOGIN: check_login,
+    # IP_ADDRESS: check_ip,
 }
 
 
@@ -103,17 +127,22 @@ def read_feature(feature_name: str) -> dict:
         return None
 
 
-def require_permission(feature: str, operation: str):
-    def decorator(fn):
-        @wraps(fn)
-        def wrapper(*args, **kwargs):
-            user_email = request.headers.get("X-User-Email")  # or however you pass identity info
-            rec = security_recs.get(feature, {}).get(operation, {})
-            allowed_users = rec.get(USER_LIST, [])
-
-            if user_email not in allowed_users:
-                abort(403, description="Access denied")
-
-            return fn(*args, **kwargs)
-        return wrapper
-    return decorator
+@needs_recs
+def is_permitted(feature_name: str, action: str,
+                 user_id: str, **kwargs) -> bool:
+    prot = read_feature(feature_name)
+    if prot is None:
+        return True
+    if action not in prot:
+        return True
+    if USER_LIST in prot[action]:
+        if user_id not in prot[action][USER_LIST]:
+            return False
+    if CHECKS not in prot[action]:
+        return True
+    for check in prot[action][CHECKS]:
+        if check not in CHECK_FUNCS:
+            raise ValueError(f'Bad check passed to is_permitted: {check}')
+        if not CHECK_FUNCS[check](user_id, **kwargs):
+            return False
+    return True
