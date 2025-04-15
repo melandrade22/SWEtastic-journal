@@ -388,11 +388,10 @@ class Manuscripts(Resource):
         Retrieve all manuscripts.
         """
         manuscripts = manu.read()
-        if manuscripts:
-            return manuscripts
+        if manuscripts is None:
+            raise wz.NotFound("Could not retrieve manuscripts from the database")
         else:
-            raise wz.NotFound('Attempt to read all manuscripts failed')
-
+            return manuscripts, 200
 
 @api.route(f'{MANU_EP}/<string:title>')
 class ManuscriptReadOne(Resource):
