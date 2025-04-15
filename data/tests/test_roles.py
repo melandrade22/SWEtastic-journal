@@ -139,5 +139,5 @@ def test_get_emails_with_role(mock_read, mock_people):
 @patch("data.people.read")
 def test_get_emails_with_bad_role(mock_read, mock_people):
     mock_read.return_value = mock_people
-    emails = rls.get_emails_with_role("XYZ") 
-    assert emails == [], f"Expected empty list, but got: {emails}"
+    with pytest.raises(ValueError):
+        emails = rls.get_emails_with_role("XYZ") 

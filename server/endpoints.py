@@ -91,13 +91,31 @@ class JournalTitle(Resource):
 @api.route(ROLES_EP)
 class Roles(Resource):
     """
-    This class handles reading person roles
+    This class handles reading roles dict
     """
     def get(self):
         """
-        Retrieve the journal person's roles.
+        Retrieve the journal all roles
         """
         return rls.read()
+
+
+@api.route(f'{ROLES_EP}/<string:code>')
+class FilterRoles(Resource):
+    """
+    Filter roles
+    """
+    def get(self, code):
+        """
+        Retrieve the all ppl with given role
+        """
+        try:
+            emails = rls.get_emails_with_role(code)
+        except ValueError as val_err:
+            return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE
+        except LookupError as look_err:
+            return {'message': str(look_err)}, HTTPStatus.NOT_FOUND
+        return emails
 
 
 @api.route(PEOPLE_EP)

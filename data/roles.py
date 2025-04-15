@@ -18,7 +18,7 @@ ME_CODE = 'ME'
 CE_CODE = 'CE'
 REF_CODE = 'RE'
 DE_CODE = 'DE'
-REV_CODE = 'RE'
+REV_CODE = 'RV'
 ASME_CODE = 'AE'
 
 
@@ -151,6 +151,11 @@ def get_emails_with_role(code: str) -> list:
     """
     Returns a list of emails of all people who have a specific role.
     """
+    all_roles = get_roles()
+    if code not in all_roles:
+        raise ValueError(f"Role '{code} does not exist")
+    if not is_in_use(code):
+        raise LookupError(f"No people found with role {code}")
     people = ppl.read()
     emails = []
     for email, person in people.items():
