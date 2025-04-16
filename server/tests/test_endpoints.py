@@ -307,3 +307,24 @@ def test_addreferee():
 
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK
+
+def test_remove_referee():
+    test_title = "RemoveRefereeTestManuscriptTitle"
+    test_author = "author@example.com"
+    test_referee = "referee@example.com"
+
+    # Stub a manuscript
+    test_manu_obj = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+        "title": test_title,
+        "author": test_author,
+        "curr_state": "submitted",
+        "referees": []
+    })
+    # Test remove referee on stubbed manuscript
+    remove_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/remove_referee", json={
+        manu.REFEREE: test_referee
+    })
+
+    # Remove the stubbed manuscript from database
+    delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
+    assert delete_resp.status_code == OK

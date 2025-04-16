@@ -602,8 +602,10 @@ class AddReferee(Resource):
                 return {"message":
                         f"Manuscript with title '{title}' not found."}, 404
 
-            # Add the referee to the manuscript
-            updated = manu.add_referee(title, referee)
+            # Add the referee to the manuscript subject to change
+            print("Title and referee are:", title, referee)
+            updated = manu.assign_ref(manuscript, referee)
+            print("Here 1")
             return {
                 "message":
                     f"Referee '{referee}' added to manuscript '{title}'.",
@@ -611,6 +613,40 @@ class AddReferee(Resource):
             }, 200
         except Exception as err:
             return {"message": f"Error adding referee: {str(err)}"}, 500
+
+
+@api.route(f'{MANU_EP}/<string:title>/delete_referee')
+class DeleteReferee(Resource):
+    """
+    Remove a referee from an existing manuscript
+    """
+    @api.response(HTTPStatus.OK, 'Referee deleted successfully')
+    @api.response(HTTPStatus.NOT_FOUND, 'Manuscript not found')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Missing or invalid data')
+    @api.expect(api.model('DeleteReferee', {
+        manu.REFEREE: fields.String(required=True,
+                                    description='Referee email or ID')
+    }))
+    def put(self, title):
+        try:
+            referee = request.json.get(manu.REFEREE)
+            if not referee:
+                return {"message": "Referee field is required."}, 400
+
+            manuscript = manu.read_one(title)
+            if not manuscript:
+                return {"message":
+                        f"Manuscript with title '{title}' not found."}, 404
+
+            # Delete referee from the manuscript subject to change
+            updated = manu.delete_ref(manuscript, referee)
+            return {
+                "message":
+                    f"Referee '{referee}' deleted from manuscript '{title}'.",
+                "manuscript": updated
+            }, 200
+        except Exception as err:
+            return {"message": f"Error deleting referee: {str(err)}"}, 500
 
 
 REGISTER_FIELDS = api.model('RegisterNewUser', {

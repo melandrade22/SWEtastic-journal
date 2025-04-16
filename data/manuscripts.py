@@ -102,6 +102,9 @@ def is_valid_action(action: str) -> bool:
 
 
 def assign_ref(manu: dict, referee: str, extra=None) -> str:
+    # Manuscript has no referees yet {'referees' : None}
+    if not manu[REFEREES]:
+        manu[REFEREES] = []
     manu[REFEREES].append(referee)
     return IN_REF_REV
 
