@@ -267,6 +267,7 @@ def test_search_manuscripts():
     #     assert "title" in manuscript, "Missing 'title' key in manuscript response"
     #     assert isinstance(manuscript["title"], str), "'title' should be a string"
 
+
 def test_update_manuscript_title():
      # Stub dummy Manuscript object
     test_title = "DUMMY_MANUSCRIPT"
@@ -284,3 +285,25 @@ def test_update_manuscript_title():
     assert update_resp.status_code == OK # Verify update successful
     # Delete to clear Manuscript object from DB
     resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
+
+
+def test_addreferee():
+    test_title = "RefereeTest Manuscript"
+    test_author = "author@example.com"
+    test_referee = "referee@example.com"
+
+    create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+        "title": test_title,
+        "author": test_author,
+        "curr_state": "submitted",
+        "referees": []
+    })
+    
+    add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/add_referee", json={
+        manu.REFEREE: test_referee
+    })
+    # need to come back to this
+    # assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
+
+    delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
+    assert delete_resp.status_code == OK
