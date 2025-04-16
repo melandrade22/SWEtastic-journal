@@ -579,6 +579,40 @@ class SearchManuscripts(Resource):
         HTTPStatus.INTERNAL_SERVER_ERROR
 
 
+@api.route(f'{MANU_EP}/<string:title>/add_referee')
+class AddReferee(Resource):
+    """
+    Add a referee to an existing manuscript.
+    """
+    @api.response(HTTPStatus.OK, 'Referee added successfully')
+    @api.response(HTTPStatus.NOT_FOUND, 'Manuscript not found')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Missing or invalid data')
+    @api.expect(api.model('AddReferee', {
+        manu.REFEREE: fields.String(required=True,
+                                    description='Referee email or ID')
+    }))
+    def put(self, title):
+        try:
+            referee = request.json.get(manu.REFEREE)
+            if not referee:
+                return {"message": "Referee field is required."}, 400
+
+            manuscript = manu.read_one(title)
+            if not manuscript:
+                return {"message":
+                        f"Manuscript with title '{title}' not found."}, 404
+
+            # Add the referee to the manuscript
+            updated = manu.add_referee(title, referee)
+            return {
+                "message":
+                    f"Referee '{referee}' added to manuscript '{title}'.",
+                "manuscript": updated
+            }, 200
+        except Exception as err:
+            return {"message": f"Error adding referee: {str(err)}"}, 500
+
+
 REGISTER_FIELDS = api.model('RegisterNewUser', {
     'name': fields.String(required=True, description='Full name of the user'),
     'email': fields.String(required=True,
