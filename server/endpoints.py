@@ -719,3 +719,23 @@ class AllUsers(Resource):
         }
 
         return {"users": sanitized_users}, 200
+
+
+@api.route('/debug/error-log')
+class DebugErrorLog(Resource):
+    """
+    Developer-only: Shows the last 25 lines of the error log
+    """
+    def get(self):
+        log_path = '/var/log/swetasticfour.pythonanywhere.com.error.log'
+        num_lines = 25
+
+        try:
+            with open(log_path, 'r') as f:
+                lines = f.readlines()
+                tail = lines[-num_lines:]
+            return {'last_lines': tail}, 200
+        except FileNotFoundError:
+            return {'message': f'Log file not found at {log_path}'}, 404
+        except Exception as e:
+            return {'message': f'Error reading log: {str(e)}'}, 500
