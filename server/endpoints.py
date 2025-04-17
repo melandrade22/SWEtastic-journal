@@ -739,3 +739,18 @@ class DebugErrorLog(Resource):
             return {'message': f'Log file not found at {log_path}'}, 404
         except Exception as e:
             return {'message': f'Error reading log: {str(e)}'}, 500
+
+
+@api.route('/debug/system-info')
+class DebugSystemInfo(Resource):
+    def get(self):
+        try:
+            roles = rls.read()
+            users = usr.read_all()
+            return {
+                "total_users": len(users),
+                "roles_defined": list(roles.keys()),
+                "debug_mode": app.debug
+            }, 200
+        except Exception as e:
+            return {"message": str(e)}, 500
