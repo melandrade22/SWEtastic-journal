@@ -316,6 +316,7 @@ def search_manuscripts(query: str):
     }
     return list(dbc.read_all(MANU_COLLECT, search_filter))
 
+
 def add_referee(title, referee):
     """
     Add a referee to the list of referees a manuscript object has.
@@ -336,7 +337,8 @@ def add_referee(title, referee):
         dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
         return f"Referee '{referee}' added to manuscript '{title}'."
     else:
-        return f"Referee '{referee}' is already assigned to manuscript '{title}'."
+        return f"Referee '{referee}' already assigned to manuscript '{title}'."
+
 
 def delete_referee(title, referee):
     """
@@ -351,7 +353,7 @@ def delete_referee(title, referee):
     ref_list = manu_obj.get(REFEREES, [])
     # Check if the referee exists in the list
     if referee in ref_list:
-        ref_list.remove(referee) # python function
+        ref_list.remove(referee)  # python function
         dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
         return f"Referee '{referee}' removed from manuscript '{title}'."
     else:
