@@ -103,9 +103,11 @@ def is_valid_action(action: str) -> bool:
 
 def assign_ref(manu: dict, referee: str, extra=None) -> str:
     # Manuscript has no referees yet {'referees' : None}
+    print("before changes", manu, referee)
     if not manu[REFEREES]:
         manu[REFEREES] = []
     manu[REFEREES].append(referee)
+    print("here 10", manu[REFEREES])
     return IN_REF_REV
 
 
@@ -313,6 +315,47 @@ def search_manuscripts(query: str):
         ]
     }
     return list(dbc.read_all(MANU_COLLECT, search_filter))
+
+def add_referee(title, referee):
+    """
+    Add a referee to the list of referees a manuscript object has.
+    title -> str representing the manuscript title.
+    referee -> str representing the name or email of the referee.
+    """
+    manu_obj = read_one(title)
+    if not manu_obj:
+        return f"No manuscript found with title: {title}"
+
+    # Get manuscript object, initialize referees to an empty list
+    ref_list = manu_obj.get(REFEREES, [])
+    if not isinstance(ref_list, list):
+        ref_list = []
+    # Avoid adding duplicate referees
+    if referee not in ref_list:
+        ref_list.append(referee)
+        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
+        return f"Referee '{referee}' added to manuscript '{title}'."
+    else:
+        return f"Referee '{referee}' is already assigned to manuscript '{title}'."
+
+def delete_referee(title, referee):
+    """
+    Delete a referee from the list of referees a manuscript object has.
+    title -> str representing the manuscript title.
+    referee -> str representing the name or email of the referee.
+    """
+    manu_obj = read_one(title)
+    if not manu_obj:
+        return f"No manuscript found with title: {title}"
+    # Get manuscript object, initialize referees to an empty list
+    ref_list = manu_obj.get(REFEREES, [])
+    # Check if the referee exists in the list
+    if referee in ref_list:
+        ref_list.remove(referee) # python function
+        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
+        return f"Referee '{referee}' removed from manuscript '{title}'."
+    else:
+        return f"Referee '{referee}' not found in manuscript '{title}'."
 
 
 def main():

@@ -580,7 +580,7 @@ class SearchManuscripts(Resource):
 
 
 @api.route(f'{MANU_EP}/<string:title>/add_referee')
-class AddReferee(Resource):
+class ManuscriptAddReferee(Resource):
     """
     Add a referee to an existing manuscript.
     """
@@ -596,27 +596,24 @@ class AddReferee(Resource):
             referee = request.json.get(manu.REFEREE)
             if not referee:
                 return {"message": "Referee field is required."}, 400
-
             manuscript = manu.read_one(title)
             if not manuscript:
                 return {"message":
                         f"Manuscript with title '{title}' not found."}, 404
 
             # Add the referee to the manuscript subject to change
-            print("Title and referee are:", title, referee)
-            updated = manu.assign_ref(manuscript, referee)
-            print("Here 1")
+            manu.add_referee(title, referee)
             return {
                 "message":
                     f"Referee '{referee}' added to manuscript '{title}'.",
-                "manuscript": updated
+                "manuscript": manuscript
             }, 200
         except Exception as err:
             return {"message": f"Error adding referee: {str(err)}"}, 500
 
 
 @api.route(f'{MANU_EP}/<string:title>/delete_referee')
-class DeleteReferee(Resource):
+class ManuscriptDeleteReferee(Resource):
     """
     Remove a referee from an existing manuscript
     """
@@ -632,18 +629,18 @@ class DeleteReferee(Resource):
             referee = request.json.get(manu.REFEREE)
             if not referee:
                 return {"message": "Referee field is required."}, 400
-
             manuscript = manu.read_one(title)
             if not manuscript:
                 return {"message":
                         f"Manuscript with title '{title}' not found."}, 404
-
             # Delete referee from the manuscript subject to change
-            updated = manu.delete_ref(manuscript, referee)
+            print("MANUSCRIPT IS 1:", manuscript)
+            manu.delete_referee(title, referee)
+            print("MANUSCRIPT IS 2:", manuscript)
             return {
                 "message":
                     f"Referee '{referee}' deleted from manuscript '{title}'.",
-                "manuscript": updated
+                "manuscript": manuscript
             }, 200
         except Exception as err:
             return {"message": f"Error deleting referee: {str(err)}"}, 500
