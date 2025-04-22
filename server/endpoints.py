@@ -426,7 +426,7 @@ class ManuscriptsValidActions(Resource):
             raise wz.NotFound("Could not retrieve manuscripts actions")
         else:
             return actions, 200
-        
+
 
 @api.route(f"{MANU_EP}/ValidStates")
 class ManuscriptsValidStates(Resource):
@@ -442,7 +442,7 @@ class ManuscriptsValidStates(Resource):
             raise wz.NotFound("Could not retrieve manuscripts states")
         else:
             return states, 200
-        
+
 
 @api.route(f'{MANU_EP}/<string:title>')
 class ManuscriptReadOne(Resource):

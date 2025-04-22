@@ -118,7 +118,6 @@ VALID_ACTION_LABELS = {
 }
 
 
-
 def get_actions() -> dict:
     return deepcopy(VALID_ACTION_LABELS)
 
