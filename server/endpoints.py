@@ -412,6 +412,38 @@ class Manuscripts(Resource):
             return manuscripts, 200
 
 
+@api.route(f"{MANU_EP}/ValidActions")
+class ManuscriptsValidActions(Resource):
+    """
+    This class handles retrieving all manuscripts valid actions.
+    """
+    def get(self):
+        """
+        Retrieve valid manuscripts actions.
+        """
+        actions = manu.get_actions()
+        if actions is None:
+            raise wz.NotFound("Could not retrieve manuscripts actions")
+        else:
+            return actions, 200
+        
+
+@api.route(f"{MANU_EP}/ValidStates")
+class ManuscriptsValidStates(Resource):
+    """
+    This class handles retrieving all manuscripts valid states.
+    """
+    def get(self):
+        """
+        Retrieve valid manuscripts states.
+        """
+        states = manu.get_states()
+        if states is None:
+            raise wz.NotFound("Could not retrieve manuscripts states")
+        else:
+            return states, 200
+        
+
 @api.route(f'{MANU_EP}/<string:title>')
 class ManuscriptReadOne(Resource):
     """

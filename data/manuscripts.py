@@ -1,4 +1,6 @@
 import data.db_connect as dbc
+from copy import deepcopy
+
 ACTION = 'action'
 AUTHOR = 'author'
 CURR_STATE = 'curr_state'
@@ -55,6 +57,19 @@ VALID_STATES = [
     IN_REF_REV,
 ]
 
+VALID_STATE_LABELS = {
+    AUTHOR_REV: 'Author Review',
+    AUTHOR_REVISION: 'Author Revision',
+    IN_REF_REV: 'Referee Review',
+    REJECTED: 'Rejected',
+    SUBMITTED: 'Submitted',
+    WITHDRAWN: 'Withdrawn',
+    FORMATTING: 'Formatting',
+    PUBLISHED: 'Published',
+    EDITOR_REVIEW: 'Editor Review',
+    COPY_EDIT: 'Copy Edit',
+}
+
 
 SAMPLE_MANU = {
     TITLE: 'Short module import names in Python',
@@ -63,8 +78,8 @@ SAMPLE_MANU = {
 }
 
 
-def get_states() -> list:
-    return VALID_STATES
+def get_states() -> dict:
+    return deepcopy(VALID_STATE_LABELS)
 
 
 def is_valid_state(state: str) -> bool:
@@ -92,9 +107,20 @@ VALID_ACTIONS = [
     ACCEPT_REV,
 ]
 
+VALID_ACTION_LABELS = {
+    ACCEPT: 'Accept',
+    ASSIGN_REF: 'Assign Referee',
+    DELETE_REF: 'Delete Referee',
+    DONE: 'Done',
+    REJECT: 'Reject',
+    WITHDRAW: 'Withdraw',
+    ACCEPT_REV: 'Accept with Revisions',
+}
 
-def get_actions() -> list:
-    return VALID_ACTIONS
+
+
+def get_actions() -> dict:
+    return deepcopy(VALID_ACTION_LABELS)
 
 
 def is_valid_action(action: str) -> bool:
