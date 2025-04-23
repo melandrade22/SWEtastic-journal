@@ -738,8 +738,6 @@ class Login(Resource):
 class AllUsers(Resource):
     def get(self):
         users = usr.read_all()
-
-       
         sanitized_users = {
             email: {
                 usr.NAME: user.get(usr.NAME),
