@@ -303,7 +303,7 @@ def test_addreferee():
         manu.REFEREE: test_referee
     })
     # need to come back to this
-    # assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
+    assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
 
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK

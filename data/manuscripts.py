@@ -347,10 +347,11 @@ def add_referee(title, referee):
     Add a referee to the list of referees a manuscript object has.
     title -> str representing the manuscript title.
     referee -> str representing the name or email of the referee.
+    Returns the updated manuscript object.
     """
     manu_obj = read_one(title)
     if not manu_obj:
-        return f"No manuscript found with title: {title}"
+        raise ValueError(f"No manuscript found with title: {title}")
 
     # Get manuscript object, initialize referees to an empty list
     ref_list = manu_obj.get(REFEREES, [])
@@ -360,9 +361,9 @@ def add_referee(title, referee):
     if referee not in ref_list:
         ref_list.append(referee)
         dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
-        return f"Referee '{referee}' added to manuscript '{title}'."
+        return read_one(title)  # Return the updated manuscript
     else:
-        return f"Referee '{referee}' already assigned to manuscript '{title}'."
+        return manu_obj  # Return the unchanged manuscript
 
 
 def delete_referee(title, referee):
