@@ -302,9 +302,16 @@ def test_addreferee():
     add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/add_referee", json={
         manu.REFEREE: test_referee
     })
-    # need to come back to this
+    
     assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
 
+    # Test adding the same referee again
+    dup_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/add_referee", json={
+        manu.REFEREE: test_referee
+    })
+    assert dup_resp.status_code == OK, f"Failed when adding duplicate referee, got {dup_resp.status_code}"
+    dup_json = dup_resp.get_json()
+    assert "added to manuscript" in dup_json["message"], f"Expected 'added to manuscript' message, got: {dup_json['message']}"
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK
 
