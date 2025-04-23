@@ -727,6 +727,7 @@ class Login(Resource):
             user = usr.read_one(email)
             return {
                 "message": f"Welcome back, {user[usr.NAME]}!",
+                "name": user[usr.NAME],
                 "level": user.get(usr.LEVEL, 0)
             }, 200
         else:
@@ -738,7 +739,7 @@ class AllUsers(Resource):
     def get(self):
         users = usr.read_all()
 
-        # Optional: exclude sensitive data like password
+       
         sanitized_users = {
             email: {
                 usr.NAME: user.get(usr.NAME),
