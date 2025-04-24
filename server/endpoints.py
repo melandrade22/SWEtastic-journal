@@ -390,7 +390,7 @@ MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
         description="Unique title for the manuscript"
     ),
     manu.AUTHOR: fields.String(
-        required=True,
+        required=False,
         description="Author of the manuscript"
     ),
     manu.AUTHOR_EMAIL: fields.String(
@@ -492,15 +492,25 @@ class ManuscriptCreate(Resource):
     def put(self):
         try:
             title = request.json.get(manu.TITLE)
-            author = request.json.get(manu.AUTHOR)
             author_email = request.json.get(manu.AUTHOR_EMAIL)
             text = request.json.get(manu.TEXT)
             abstract = request.json.get(manu.ABSTRACT)
             # validate required fields
-            if not title or not author:
+            if not title:
                 raise ValueError(
-                    "Missing required fields"
-                    + "title or author"
+                    "Missing required fields: Title"
+                )
+            if not author_email:
+                raise ValueError(
+                    "Missing required fields: Author Email"
+                )
+            if not text:
+                raise ValueError(
+                    "Missing required fields: Text"
+                )
+            if not abstract:
+                raise ValueError(
+                    "Missing required fields: abstract"
                 )
 
             # check for duplicate person by title
@@ -509,7 +519,7 @@ class ManuscriptCreate(Resource):
                     f"A manuscript with title '{title}' already exists."
                 )
             # create new title
-            ret = manu.create(title, author, author_email, abstract, text)
+            ret = manu.create(title, author_email, abstract, text)
 
         except ValueError as val_err:
             return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE

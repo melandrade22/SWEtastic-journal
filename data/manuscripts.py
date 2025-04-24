@@ -1,4 +1,5 @@
 import data.db_connect as dbc
+import data.people as ppl
 from copy import deepcopy
 
 ACTION = 'action'
@@ -306,12 +307,18 @@ def is_valid_manuscript(title):
 
 
 # Create a manuscript object
-def create(title: str, author: str, author_email: str,
+def create(title: str, author_email: str,
            abstract: None, text: None, referees=[]):
+    if not ppl.exists(author_email):
+        raise ValueError(f"{author_email} doesn't exist,"
+                         + "create person in 'View all people'")
+    # Author name look up
+    person = ppl.read_one(author_email)
+    name = person.get("name")
     if is_valid_manuscript(title):
         contents = {
             TITLE: title,
-            AUTHOR: author,
+            AUTHOR: name,
             AUTHOR_EMAIL: author_email,
             CURR_STATE: SUBMITTED,  # SUBMITTED by default
             ABSTRACT: abstract,

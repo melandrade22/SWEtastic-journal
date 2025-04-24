@@ -20,7 +20,7 @@ def mock_people():
         "user1@nyu.edu": {"name": "User1", "affiliation": "NYU", "email": "user1@nyu.edu", "roles": ["AU","ED"]},
         "user2@nyu.edu": {"name": "User2", "affiliation": "NYU", "email": "user2@nyu.edu", "roles": ["AU"]},
         "user3@nyu.edu": {"name": "User3", "affiliation": "NYU", "email": "user3@nyu.edu", "roles": ["ME"]},
-        "user3@nyu.edu": {"name": "User3", "affiliation": "NYU", "email": "user3@nyu.edu", "roles": ["ED"]},
+        "user4@nyu.edu": {"name": "User3", "affiliation": "NYU", "email": "user3@nyu.edu", "roles": ["ED"]},
     }
 
 
@@ -48,8 +48,9 @@ def test_get_role_codes():
 def test_is_valid():
     assert rls.is_valid(rls.TEST_CODE)
 
-
-def test_delete_rl_in_dict(mock_people):
+@patch('data.people.read')
+def test_delete_rl_in_dict(mock_read,mock_people):
+    mock_read.return_value = mock_people
     rls_before = rls.get_roles()
     original_length = len(rls_before)
     rls.delete_role(rls.CE_CODE)

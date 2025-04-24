@@ -199,14 +199,14 @@ def test_get_single_manuscript():
         assert "title" in resp_json
         assert resp_json["title"] == test_title
 
-def test_create_manuscript():
+def test_create_manuscript(mock_person):
     test_title = "Sample Manuscript"
     # Stub dummy Manuscript object
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
-        "author": "Author Name",
-        "curr_state": "draft",
-        "referees": ["referee1", "referee2"]
+        "author_email": TEST_EMAIL,
+        "abstract": "draft",
+        "text": "text"
     })
     assert create_resp.status_code == OK  # ensure the manuscript was created successfully
     # retrieve the dummy manuscript 
@@ -221,15 +221,15 @@ def test_get_nonexistent_manuscript():
     assert resp.status_code == NOT_FOUND  # Should return 404 for missing manuscript
 
 
-def test_delete_manuscript():
+def test_delete_manuscript(mock_person):
     test_title = "Sample Manuscript"
     
     # create the dummy manuscript to ensure it exists
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
-        "author": "Author Name",
-        "curr_state": "draft",
-        "referees": ["referee1", "referee2"]
+        "author_email": TEST_EMAIL,
+        "abstract": "draft",
+        "text": "text"
     })
     assert create_resp.status_code == OK  # ensure the manuscript was created successfully
     
@@ -268,15 +268,15 @@ def test_search_manuscripts():
     #     assert isinstance(manuscript["title"], str), "'title' should be a string"
 
 
-def test_update_manuscript_title():
+def test_update_manuscript_title(mock_person):
      # Stub dummy Manuscript object
     test_title = "DUMMY_MANUSCRIPT"
     new_state = manu.VALID_STATES[0] # Pick a valid state to set it to (Randomize selected state?)
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
-        "author": "Author Name",
-        "curr_state": "draft",
-        "referees": ["referee1", "referee2"]
+        "author_email": TEST_EMAIL,
+        "abstract": "draft",
+        "text": "text"
     })
     assert create_resp.status_code == OK  # ensure successful creation
     resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}") # retrieve the dummy manuscript 
@@ -287,16 +287,15 @@ def test_update_manuscript_title():
     resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
 
 
-def test_addreferee():
+def test_addreferee(mock_person):
     test_title = "RefereeTest Manuscript"
-    test_author = "author@example.com"
     test_referee = "referee@example.com"
 
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
-        "author": test_author,
-        "curr_state": "submitted",
-        "referees": []
+        "author_email": TEST_EMAIL,
+        "abstract": "draft",
+        "text": "text"
     })
     
     add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/add_referee", json={
@@ -315,17 +314,16 @@ def test_addreferee():
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK
 
-def test_remove_referee():
+def test_remove_referee(mock_person):
     test_title = "RemoveRefereeTestManuscriptTitle"
-    test_author = "author@example.com"
     test_referee = "referee@example.com"
 
     # Stub a manuscript
     test_manu_obj = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
-        "author": test_author,
-        "curr_state": "submitted",
-        "referees": []
+        "author_email": TEST_EMAIL,
+        "abstract": "draft",
+        "text": "text"
     })
     # Test remove referee on stubbed manuscript
     remove_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/remove_referee", json={
