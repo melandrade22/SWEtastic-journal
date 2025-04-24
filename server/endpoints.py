@@ -449,6 +449,22 @@ class ManuscriptsValidActions(Resource):
             return actions, 200
 
 
+@api.route(f"{MANU_EP}/ValidActions/<string:state>")
+class ManuscriptsValidActionsFSM(Resource):
+    """
+    This class handles retrieving valid actions based on state.
+    """
+    def get(self, state):
+        """
+        Retrieve valid manuscripts actions based on state.
+        """
+        actions = manu.get_valid_actions_by_state(state)
+        if actions is None:
+            raise wz.NotFound("Could not retrieve manuscripts actions")
+        else:
+            return actions, 200
+
+
 @api.route(f"{MANU_EP}/ValidStates")
 class ManuscriptsValidStates(Resource):
     """

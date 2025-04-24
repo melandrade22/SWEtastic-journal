@@ -274,7 +274,7 @@ STATE_TABLE = {
 
 
 def get_valid_actions_by_state(state: str):
-    valid_actions = STATE_TABLE[state].keys()
+    valid_actions = list(STATE_TABLE[state].keys())
     print(f'{valid_actions=}')
     return valid_actions
 
