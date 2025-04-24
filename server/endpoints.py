@@ -393,6 +393,27 @@ MANU_CREATE_FLDS = api.model('CreateNewManuscriptEntry', {
         required=True,
         description="Author of the manuscript"
     ),
+    manu.AUTHOR_EMAIL: fields.String(
+        required=True,
+        description="Email address of the author (must exist in person DB)"
+    ),
+    manu.CURR_STATE: fields.String(
+        required=False,
+        description="Initial state of the manuscript"
+    ),
+    manu.REFEREES: fields.Raw(
+        required=False,
+        description="Referees dictionary keyed by email"
+    ),
+    manu.TEXT: fields.String(
+        required=False,
+        description="Full body of the manuscript"
+    ),
+    manu.ABSTRACT: fields.String(
+        required=False,
+        description="Summary of the manuscript"
+    )
+
 })
 
 
@@ -472,7 +493,9 @@ class ManuscriptCreate(Resource):
         try:
             title = request.json.get(manu.TITLE)
             author = request.json.get(manu.AUTHOR)
-            referees = request.json.get(manu.REFEREES)
+            author_email = request.json.get(manu.AUTHOR_EMAIL)
+            text = request.json.get(manu.TEXT)
+            abstract = request.json.get(manu.ABSTRACT)
             # validate required fields
             if not title or not author:
                 raise ValueError(
@@ -486,7 +509,7 @@ class ManuscriptCreate(Resource):
                     f"A manuscript with title '{title}' already exists."
                 )
             # create new title
-            ret = manu.create(title, author, referees)
+            ret = manu.create(title, author, author_email, abstract, text)
 
         except ValueError as val_err:
             return {'message': str(val_err)}, HTTPStatus.NOT_ACCEPTABLE

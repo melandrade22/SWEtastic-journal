@@ -3,12 +3,17 @@ from copy import deepcopy
 
 ACTION = 'action'
 AUTHOR = 'author'
+AUTHOR_EMAIL = 'author_email'
 CURR_STATE = 'curr_state'
 DISP_NAME = 'disp_name'
 MANU_ID = '_id'
 REFEREE = 'referee'
 REFEREES = 'referees'
 TITLE = 'title'
+TEXT = 'text'
+ABSTRACT = 'abstract'
+EDITOR = 'editor'
+
 
 TEST_ID = 'fake_id'
 TEST_FLD_NM = TITLE
@@ -25,8 +30,11 @@ FIELDS = {
         DISP_NAME: TEST_FLD_DISP_NM,
     },
     AUTHOR: {},
+    AUTHOR_EMAIL: {},
     REFEREES: {},
-    CURR_STATE: {}
+    CURR_STATE: {},
+    ABSTRACT: {},
+    TEXT: {},
 }
 
 # states:
@@ -298,12 +306,16 @@ def is_valid_manuscript(title):
 
 
 # Create a manuscript object
-def create(title: str, author: str, referees=[]):
+def create(title: str, author: str, author_email: str,
+           abstract: None, text: None, referees=[]):
     if is_valid_manuscript(title):
         contents = {
             TITLE: title,
             AUTHOR: author,
+            AUTHOR_EMAIL: author_email,
             CURR_STATE: SUBMITTED,  # SUBMITTED by default
+            ABSTRACT: abstract,
+            TEXT: text,
             REFEREES: referees
         }
         dbc.insert_one(MANU_COLLECT, contents)
