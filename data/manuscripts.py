@@ -134,24 +134,65 @@ def get_actions() -> dict:
 def is_valid_action(action: str) -> bool:
     return action in VALID_ACTIONS
 
+# def assign_ref(manu: dict, referee: str, extra=None) -> str:
+#     # Manuscript has no referees yet {'referees' : None}
+#     if not manu[REFEREES]:
+#         manu[REFEREES] = []
+#     manu[REFEREES].append(referee)
+#     return IN_REF_REV
 
-def assign_ref(manu: dict, referee: str, extra=None) -> str:
-    # Manuscript has no referees yet {'referees' : None}
-    print("before changes", manu, referee)
-    if not manu[REFEREES]:
-        manu[REFEREES] = []
-    manu[REFEREES].append(referee)
-    print("here 10", manu[REFEREES])
-    return IN_REF_REV
+# def delete_ref(manu: dict, referee: str) -> str:
+#     if len(manu[REFEREES]) > 0:
+#         manu[REFEREES].remove(referee)
+#     if len(manu[REFEREES]) > 0:
+#         return IN_REF_REV
+#     else:
+#         return SUBMITTED
 
 
-def delete_ref(manu: dict, referee: str) -> str:
-    if len(manu[REFEREES]) > 0:
-        manu[REFEREES].remove(referee)
-    if len(manu[REFEREES]) > 0:
-        return IN_REF_REV
-    else:
-        return SUBMITTED
+def assign_ref(title, referee):
+    """
+    Add a referee to the list of referees a manuscript object has.
+    title -> str representing the manuscript title.
+    referee -> str representing the name or email of the referee.
+    Returns the updated manuscript object.
+    """
+    manu_obj = read_one(title)
+    if not manu_obj:
+        raise ValueError(f"No manuscript found with title: {title}")
+
+    ref_list = manu_obj.get(REFEREES, [])
+    if not isinstance(ref_list, list):
+        ref_list = []
+
+    if referee not in ref_list:
+        ref_list.append(referee)
+        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
+
+    # Always transition to IN_REF_REV if we added a referee
+    new_state = IN_REF_REV
+    dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
+    return new_state
+
+
+def delete_ref(title: str, referee: str) -> str:
+    """
+    Removes a referee from the manuscript's referee list.
+    Returns the updated state after the operation.
+    """
+    manu_obj = read_one(title)
+    if not manu_obj:
+        raise ValueError(f"No manuscript found with title: {title}")
+
+    ref_list = manu_obj.get(REFEREES, [])
+    if referee in ref_list:
+        ref_list.remove(referee)
+        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
+
+    # If any referees remain, stay in IN_REF_REV, else go back to SUBMITTED
+    new_state = IN_REF_REV if len(ref_list) > 0 else SUBMITTED
+    dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
+    return new_state
 
 
 def delete(title: str) -> str:
@@ -359,50 +400,6 @@ def search_manuscripts(query: str):
         ]
     }
     return list(dbc.read_all(MANU_COLLECT, search_filter))
-
-
-def add_referee(title, referee):
-    """
-    Add a referee to the list of referees a manuscript object has.
-    title -> str representing the manuscript title.
-    referee -> str representing the name or email of the referee.
-    Returns the updated manuscript object.
-    """
-    manu_obj = read_one(title)
-    if not manu_obj:
-        raise ValueError(f"No manuscript found with title: {title}")
-
-    # Get manuscript object, initialize referees to an empty list
-    ref_list = manu_obj.get(REFEREES, [])
-    if not isinstance(ref_list, list):
-        ref_list = []
-    # Avoid adding duplicate referees
-    if referee not in ref_list:
-        ref_list.append(referee)
-        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
-        return read_one(title)  # Return the updated manuscript
-    else:
-        return manu_obj  # Return the unchanged manuscript
-
-
-def delete_referee(title, referee):
-    """
-    Delete a referee from the list of referees a manuscript object has.
-    title -> str representing the manuscript title.
-    referee -> str representing the name or email of the referee.
-    """
-    manu_obj = read_one(title)
-    if not manu_obj:
-        return f"No manuscript found with title: {title}"
-    # Get manuscript object, initialize referees to an empty list
-    ref_list = manu_obj.get(REFEREES, [])
-    # Check if the referee exists in the list
-    if referee in ref_list:
-        ref_list.remove(referee)  # python function
-        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
-        return f"Referee '{referee}' removed from manuscript '{title}'."
-    else:
-        return f"Referee '{referee}' not found in manuscript '{title}'."
 
 
 def main():

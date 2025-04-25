@@ -663,7 +663,7 @@ class SearchManuscripts(Resource):
 @api.route(f'{MANU_EP}/<string:title>/add_referee')
 class ManuscriptAddReferee(Resource):
     """
-    Add a referee to an existing manuscript.
+    Assign (add) a referee to an existing manuscript.
     """
     @api.response(HTTPStatus.OK, 'Referee added successfully')
     @api.response(HTTPStatus.NOT_FOUND, 'Manuscript not found')
@@ -683,7 +683,7 @@ class ManuscriptAddReferee(Resource):
                         f"Manuscript with title '{title}' not found."}, 404
 
             # Add the referee to the manuscript subject to change
-            manu.add_referee(title, referee)
+            manu.assign_ref(title, referee)
             return {
                 "message":
                     f"Referee '{referee}' added to manuscript '{title}'.",
@@ -715,9 +715,7 @@ class ManuscriptDeleteReferee(Resource):
                 return {"message":
                         f"Manuscript with title '{title}' not found."}, 404
             # Delete referee from the manuscript subject to change
-            print("MANUSCRIPT IS 1:", manuscript)
-            manu.delete_referee(title, referee)
-            print("MANUSCRIPT IS 2:", manuscript)
+            manu.delete_ref(title, referee)
             return {
                 "message":
                     f"Referee '{referee}' deleted from manuscript '{title}'.",
