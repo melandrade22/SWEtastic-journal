@@ -64,7 +64,7 @@ DUAL_FACTOR = 'dual_factor'
 # Features:
 PEOPLE = 'people'
 BAD_FEATURE = 'baaaad feature'
-
+MANUSCRIPTS = 'manuscripts'
 PEOPLE_MISSING_ACTION = READ
 GOOD_USER_ID = 'ejc369@nyu.edu'
 
@@ -76,6 +76,36 @@ temp_recs = {
             USER_LIST: ['ejc369@nyu.edu'],
             CHECKS: {
                 LOGIN: True,
+            },
+        },
+    },
+    MANUSCRIPTS: {
+        CREATE: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        READ: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+                IP_ADDR: True,
+            },
+        },
+        UPDATE: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+                DUAL_FACTOR: True,
+            },
+        },
+        DELETE: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+                IP_ADDR: True,
+                DUAL_FACTOR: True,
             },
         },
     },
