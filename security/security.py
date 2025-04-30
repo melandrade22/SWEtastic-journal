@@ -58,6 +58,8 @@ USER_LIST = 'user_list'
 CHECKS = 'checks'
 LOGIN = 'login'
 LOGIN_KEY = 'login_key'
+IP_ADDR = 'ip_address'
+DUAL_FACTOR = 'dual_factor'
 
 # Features:
 PEOPLE = 'people'
@@ -93,9 +95,20 @@ def check_login(user_id: str, **kwargs):
     return is_valid_key(user_id, kwargs[LOGIN_KEY])
 
 
+def check_ip(user_id: str, **kwargs):
+    if IP_ADDR not in kwargs:
+        return False
+    return True  # Simulate IP address check
+
+
+def dual_factor(user_id: str, **kwargs):
+    return True  # Simulate dual factor check
+
+
 CHECK_FUNCS = {
     LOGIN: check_login,
-    # IP_ADDRESS: check_ip,
+    IP_ADDR: check_ip,
+    DUAL_FACTOR: dual_factor,
 }
 
 
