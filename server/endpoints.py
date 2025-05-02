@@ -549,14 +549,6 @@ class ManuscriptCreate(Resource):
         }, 200
 
 
-MANU_ACTION_FLDS = api.model('ManuscriptAction', {
-    manu.MANU_ID: fields.String,
-    manu.CURR_STATE: fields.String,
-    manu.ACTION: fields.String,
-    manu.REFEREE: fields.String,
-})
-
-
 @api.route(f'{MANU_EP}/<string:title>/delete')
 class ManuscriptDelete(Resource):
     def delete(self, title):
@@ -579,6 +571,7 @@ class ManuscriptDelete(Resource):
 @api.route(f'{MANU_EP}/<string:title>/update/<string:new_state>')
 class ManuscriptUpdateState(Resource):
     """
+    Endpoint used to debug and test ReceiveActions endpoint
     Parameters:
     title -> unique title identifier to a manuscript object
     new_state -> new state to set the curr_state of a manuscript to
@@ -604,6 +597,13 @@ class ManuscriptUpdateState(Resource):
             return {"message": f"Error: {str(err)}"}, 500
 
 
+MANU_ACTION_FLDS = api.model('ManuscriptAction', {
+    'title': fields.String(required=True),
+    'action': fields.String(required=True),
+    'referee': fields.String(required=False)
+})
+
+
 @api.route(f'{MANU_EP}/receive_action')
 class ReceiveAction(Resource):
     """
@@ -617,13 +617,31 @@ class ReceiveAction(Resource):
         Receive an action for a manuscript.
         """
         try:
-            print(request. json)
-            manu_id = request.json.get(manu.MANU_ID)
-            curr_state = request.json.get(manu.CURR_STATE)
-            action = request. json.get(manu.ACTION)
-            kwargs = {}
-            kwargs[manu.REFEREE] = request.json.get(manu.REFEREE)
+            print(request.json)
+            title = request.json.get(manu.TITLE)
+            action = request.json.get(manu.ACTION)
+            referee = request.json.get(manu.REFEREE)
+
+            valid_ref = rls.get_emails_with_role('RE')
+            if referee not in valid_ref:
+                print(f"valid ref{valid_ref}")
+                raise wz.NotAcceptable(f'Invalid referee email: {referee}')
+
+            manuscript = manu.read_one(title)
+            if not manuscript:
+                raise wz.NotFound(f"No manuscript found with title: {title}")
+
+            manu_id = manuscript['_id']
+            curr_state = manuscript[manu.CURR_STATE]
+            kwargs = {manu.REFEREE: referee}
             ret = manu.handle_action(manu_id, curr_state, action, **kwargs)
+        except ValueError as err:
+            raise wz.NotAcceptable(f"Invalid value: {err}")
+        except wz.NotAcceptable as err:
+            print(f"Handled exception: {err}")
+            raise err
+        except wz.NotFound as err:
+            raise err
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
         return {

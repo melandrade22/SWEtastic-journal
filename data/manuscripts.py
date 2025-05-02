@@ -1,6 +1,7 @@
 import data.db_connect as dbc
 import data.people as ppl
 from copy import deepcopy
+from bson import ObjectId
 
 ACTION = 'action'
 AUTHOR = 'author'
@@ -150,16 +151,16 @@ def is_valid_action(action: str) -> bool:
 #         return SUBMITTED
 
 
-def assign_ref(title, referee):
+def assign_ref(manu_id, referee) -> str:
     """
     Add a referee to the list of referees a manuscript object has.
     title -> str representing the manuscript title.
     referee -> str representing the name or email of the referee.
     Returns the updated manuscript object.
     """
-    manu_obj = read_one(title)
+    manu_obj = dbc.read_one(MANU_COLLECT, {'_id': manu_id})
     if not manu_obj:
-        raise ValueError(f"No manuscript found with title: {title}")
+        raise ValueError(f"No manuscript found with ID: {manu_id}")
 
     ref_list = manu_obj.get(REFEREES, [])
     if not isinstance(ref_list, list):
@@ -167,31 +168,37 @@ def assign_ref(title, referee):
 
     if referee not in ref_list:
         ref_list.append(referee)
-        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
-
-    # Always transition to IN_REF_REV if we added a referee
+        dbc.update(MANU_COLLECT, {'_id': manu_id}, {REFEREES: ref_list})
+    else:
+        raise ValueError(f"Referee ({referee}) not found")
     new_state = IN_REF_REV
-    dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
+    dbc.update(MANU_COLLECT, {'_id': manu_id}, {CURR_STATE: new_state})
     return new_state
 
 
-def delete_ref(title: str, referee: str) -> str:
+def delete_ref(manu_id, referee: str) -> str:
     """
     Removes a referee from the manuscript's referee list.
     Returns the updated state after the operation.
     """
-    manu_obj = read_one(title)
+    manu_obj = dbc.read_one(MANU_COLLECT, {'_id': manu_id})
+
     if not manu_obj:
-        raise ValueError(f"No manuscript found with title: {title}")
+        raise ValueError(f"No manuscript found with ID: {manu_id}")
 
     ref_list = manu_obj.get(REFEREES, [])
-    if referee in ref_list:
-        ref_list.remove(referee)
-        dbc.update(MANU_COLLECT, {TITLE: title}, {REFEREES: ref_list})
 
-    # If any referees remain, stay in IN_REF_REV, else go back to SUBMITTED
-    new_state = IN_REF_REV if len(ref_list) > 0 else SUBMITTED
-    dbc.update(MANU_COLLECT, {TITLE: title}, {CURR_STATE: new_state})
+    if referee in ref_list and len(ref_list) > 0:
+        ref_list.remove(referee)
+        dbc.update(MANU_COLLECT, {'_id': manu_id}, {REFEREES: ref_list})
+    else:
+        raise ValueError(f"Referee ({referee}) not found")
+    if len(ref_list) > 0:
+        new_state = IN_REF_REV
+    else:
+        new_state = SUBMITTED
+
+    dbc.update(MANU_COLLECT, {'_id': manu_id}, {CURR_STATE: new_state})
     return new_state
 
 
@@ -374,12 +381,28 @@ def create(title: str, author_email: str,
 
 
 def handle_action(manu_id, curr_state, action, **kwargs) -> str:
-    kwargs['manu'] = SAMPLE_MANU
+    if isinstance(manu_id, str):
+        manu_id = ObjectId(manu_id)
+    manu_obj = dbc.read_one(MANU_COLLECT, {'_id': manu_id})
+    if not manu_obj:
+        raise ValueError(f"No manuscript found with ID: {manu_id}")
+    kwargs['manu'] = manu_obj
     if curr_state not in STATE_TABLE:
         raise ValueError(f'Bad state: {curr_state}')
     if action not in STATE_TABLE[curr_state]:
         raise ValueError(f'{action} not available in {curr_state}')
-    return STATE_TABLE[curr_state][action][FUNC](**kwargs)
+
+    if action == ASSIGN_REF:
+        referee = kwargs.get(REFEREE)
+        next_state = assign_ref(manu_id, referee)
+    elif action == DELETE_REF:
+        referee = kwargs.get(REFEREE)
+        next_state = delete_ref(manu_id, referee)
+    else:
+        next_state = STATE_TABLE[curr_state][action][FUNC](**kwargs)
+
+    dbc.update(MANU_COLLECT, {'_id': manu_id}, {CURR_STATE: next_state})
+    return next_state
 
 
 def search_manuscripts(query: str):
