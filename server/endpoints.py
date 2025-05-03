@@ -622,11 +622,15 @@ class ReceiveAction(Resource):
             action = request.json.get(manu.ACTION)
             referee = request.json.get(manu.REFEREE)
 
-            valid_ref = rls.get_emails_with_role('RE')
-            if referee not in valid_ref:
-                print(f"valid ref{valid_ref}")
-                raise wz.NotAcceptable(f'Invalid referee email: {referee}')
-
+            if action in ['ARF', 'DRF']:
+                if not referee:
+                    raise wz.NotAcceptable(f'Referee is required {action}')
+                valid_ref = rls.get_emails_with_role('RE')
+                if referee not in valid_ref:
+                    print(f"valid ref{valid_ref}")
+                    raise wz.NotAcceptable(f'Invalid referee email: {referee}')
+            else:
+                referee = None
             manuscript = manu.read_one(title)
             if not manuscript:
                 raise wz.NotFound(f"No manuscript found with title: {title}")
