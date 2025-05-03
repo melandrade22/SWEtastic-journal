@@ -200,16 +200,15 @@ def test_get_single_manuscript():
         assert resp_json["title"] == test_title
 
 def test_create_manuscript(mock_person):
-    test_title = "Sample Manuscript"
-    # Stub dummy Manuscript object
+    test_title = "sample manuscript"
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
         "author_email": TEST_EMAIL,
         "abstract": "draft",
         "text": "text"
     })
-    assert create_resp.status_code == OK  # ensure the manuscript was created successfully
-    # retrieve the dummy manuscript 
+    assert create_resp.status_code == OK  # ensure successful creation
+     # retrieve the dummy manuscript 
     resp = TEST_CLIENT.get(f"{ep.MANU_EP}/{test_title}")
     assert resp.status_code == OK  # return 200 to make sure 
     # Delete to clear Manuscript object from DB
@@ -222,8 +221,7 @@ def test_get_nonexistent_manuscript():
 
 
 def test_delete_manuscript(mock_person):
-    test_title = "Sample Manuscript"
-    
+    test_title = "Sample_Manuscript"
     # create the dummy manuscript to ensure it exists
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
@@ -288,10 +286,8 @@ def test_update_manuscript_title(mock_person):
 
 
 def test_addreferee(mock_person):
-    test_title = "RefereeTest Manuscript"
     test_referee = "referee@example.com"
-    test_title = "Sample Manuscript"
-    # Stub dummy Manuscript object
+    test_title = "Sample Manu"
     create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
         "author_email": TEST_EMAIL,
@@ -312,36 +308,68 @@ def test_addreferee(mock_person):
         "email": test_referee,
         "roles": ["RE"] 
     })
-
-    # Add referee using handle_action
-    add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/receive_action", json={
-        manu.TITLE: test_title,
-        manu.ACTION: "ARF",  # Action = Assign Referee
-        manu.REFEREE: test_referee
-    })
+    
+    # Patch the function to return a list with the referee
+    with patch('data.roles.get_emails_with_role', return_value=[test_referee]):
+        # Add referee using handle_action
+        add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/receive_action", json={
+            manu.TITLE: test_title,
+            manu.ACTION: "ARF",  # Action = Assign Referee
+            manu.REFEREE: test_referee
+        })
+        
     assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
 
     # Clean up
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK
-    TEST_CLIENT.delete(f"{ep.PERSON_EP}/{test_referee}/delete")  # Also clean referee from person db
+    TEST_CLIENT.delete(f"{ep.PEOPLE_EP}/{test_referee}/delete")
+
 
 def test_remove_referee(mock_person):
-    test_title = "RemoveRefereeTestManuscriptTitle"
+    test_title = "RemoveRefereeManuTitle"
     test_referee = "referee@example.com"
-
-    # Stub a manuscript
-    test_manu_obj = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
+    create_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/create", json={
         "title": test_title,
         "author_email": TEST_EMAIL,
         "abstract": "draft",
         "text": "text"
     })
-    # Test remove referee on stubbed manuscript
-    remove_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/{test_title}/remove_referee", json={
-        manu.REFEREE: test_referee
-    })
+    assert create_resp.status_code == OK 
 
-    # Remove the stubbed manuscript from database
+    TEST_CLIENT.put("/people/create", json={
+        "name": "Author Person",
+        "affiliation": "AuthorAffiliation",
+        "email": TEST_EMAIL,
+        "roles": ["AU"] 
+    })
+    TEST_CLIENT.put(f"{ep.PEOPLE_EP}/create", json={
+        "name": "Referee Person",
+        "affiliation": "RefereeAffiliation",
+        "email": test_referee,
+        "roles": ["RE"] 
+    })
+    
+    # Patch the function to return a list with the referee
+    with patch('data.roles.get_emails_with_role', return_value=[test_referee]):
+        # Add referee using handle_action
+        add_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/receive_action", json={
+            manu.TITLE: test_title,
+            manu.ACTION: "ARF",  # Action = Assign Referee
+            manu.REFEREE: test_referee
+        })
+        
+    assert add_referee_resp.status_code == OK, f"Failed to add referee, got {add_referee_resp.status_code}"
+    
+    with patch('data.roles.get_emails_with_role', return_value=[test_referee]):
+        remove_referee_resp = TEST_CLIENT.put(f"{ep.MANU_EP}/receive_action", json={
+            manu.TITLE: test_title,
+            manu.ACTION: "DRF",
+            manu.REFEREE: test_referee
+        })
+    assert remove_referee_resp.status_code == OK, f"Failed to remove referee, got {remove_referee_resp.status_code}"
+
+    # Clean up
     delete_resp = TEST_CLIENT.delete(f"{ep.MANU_EP}/{test_title}/delete")
     assert delete_resp.status_code == OK
+    TEST_CLIENT.delete(f"{ep.PEOPLE_EP}/{test_referee}/delete") 
