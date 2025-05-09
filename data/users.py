@@ -86,7 +86,7 @@ def hash_password(password):
 #     }
 #     dbc.insert_one(USERS_COLLECT, user)
 #     return user
-def create_user(email: str, name: str, password: str, role: str = "Author"):
+def create_user(email: str, name: str, password: str, role: str = "AU"):
     if read_one(email):
         raise ValueError("User already exists.")
 

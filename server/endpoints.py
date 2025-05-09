@@ -764,22 +764,26 @@ class Register(Resource):
         name = data.get("name")
         email = data.get("email")
         password = data.get("password")
-        role = data.get("role", "Author")
-        if role == "string": 
-            role = "Author"
+        role = data.get("role", "AU")
+        if role == "string":
+            role = "AU"
 
         if not all([name, email, password]):
             return {"message": "Missing required fields."}, 400
 
         try:
             user = usr.create_user(email, name, password, role)
+
+            if not ppl.exists(email):
+                ppl.create(name, "Not specified", email, role)
+
         except ValueError as ve:
             return {"message": str(ve)}, 400
 
         return {
             "user": {usr.EMAIL: user[usr.EMAIL],
                      usr.NAME: user[usr.NAME],
-                     "role": user.get("role", "Author")
+                     "role": user.get("role", "AU")
                      }
         }, 201
 
@@ -804,7 +808,7 @@ class Login(Resource):
                 "message": f"Welcome back, {user[usr.NAME]}!",
                 "name": user[usr.NAME],
                 "level": user.get(usr.LEVEL, 0),
-                "role": user.get("role", "Author")
+                "role": user.get("role", "AU")
             }, 200
         else:
             return {"message": "Invalid credentials."}, 401
