@@ -96,6 +96,7 @@ def create_user(email: str, name: str, password: str, role: str = "reader"):
         NAME: name,
         PASSWORD: hashed,
         LEVEL: DEFAULT_LEVEL,
+        "role": role
     }
     dbc.insert_one(USERS_COLLECT, user)
     return user
