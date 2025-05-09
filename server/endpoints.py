@@ -765,7 +765,7 @@ class Register(Resource):
         email = data.get("email")
         password = data.get("password")
         role = data.get("role", "AU")
-        if role == "string":
+        if role == "string" or role == '':
             role = "AU"
 
         if not all([name, email, password]):
