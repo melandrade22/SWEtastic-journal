@@ -11,6 +11,7 @@ EMAIL = 'email'
 NAME = 'name'
 PASSWORD = 'password'
 LEVEL = 'level'
+role = 'role'
 
 DEFAULT_LEVEL = 0
 
@@ -72,7 +73,20 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-def create_user(email: str, name: str, password: str):
+# def create_user(email: str, name: str, password: str):
+#     if read_one(email):
+#         raise ValueError("User already exists.")
+
+#     hashed = hash_password(password)
+#     user = {
+#         EMAIL: email,
+#         NAME: name,
+#         PASSWORD: hashed,
+#         LEVEL: DEFAULT_LEVEL
+#     }
+#     dbc.insert_one(USERS_COLLECT, user)
+#     return user
+def create_user(email: str, name: str, password: str, role: str = "reader"):
     if read_one(email):
         raise ValueError("User already exists.")
 
@@ -81,7 +95,7 @@ def create_user(email: str, name: str, password: str):
         EMAIL: email,
         NAME: name,
         PASSWORD: hashed,
-        LEVEL: DEFAULT_LEVEL
+        LEVEL: DEFAULT_LEVEL,
     }
     dbc.insert_one(USERS_COLLECT, user)
     return user

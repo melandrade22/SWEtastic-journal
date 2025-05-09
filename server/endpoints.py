@@ -752,6 +752,7 @@ REGISTER_FIELDS = api.model('RegisterNewUser', {
     'email': fields.String(required=True,
                            description='User email (must be unique)'),
     'password': fields.String(required=True, description='Password for login'),
+    'role': fields.String(required=False, description='User role'),
 })
 
 
@@ -763,18 +764,21 @@ class Register(Resource):
         name = data.get("name")
         email = data.get("email")
         password = data.get("password")
+        role = data.get("role", "reader")
 
         if not all([name, email, password]):
             return {"message": "Missing required fields."}, 400
 
         try:
-            user = usr.create_user(email, name, password)
+            user = usr.create_user(email, name, password, role)
         except ValueError as ve:
             return {"message": str(ve)}, 400
 
         return {
             "user": {usr.EMAIL: user[usr.EMAIL],
-                     usr.NAME: user[usr.NAME]}
+                     usr.NAME: user[usr.NAME],
+                     "role": user.get("role", "reader")
+                     }
         }, 201
 
 
@@ -797,7 +801,8 @@ class Login(Resource):
             return {
                 "message": f"Welcome back, {user[usr.NAME]}!",
                 "name": user[usr.NAME],
-                "level": user.get(usr.LEVEL, 0)
+                "level": user.get(usr.LEVEL, 0),
+                "role": user.get("role", "reader")
             }, 200
         else:
             return {"message": "Invalid credentials."}, 401
