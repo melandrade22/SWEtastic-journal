@@ -764,7 +764,9 @@ class Register(Resource):
         name = data.get("name")
         email = data.get("email")
         password = data.get("password")
-        role = data.get("role", "reader")
+        role = data.get("role", "Author")
+        if role == "string": 
+            role = "Author"
 
         if not all([name, email, password]):
             return {"message": "Missing required fields."}, 400
@@ -777,7 +779,7 @@ class Register(Resource):
         return {
             "user": {usr.EMAIL: user[usr.EMAIL],
                      usr.NAME: user[usr.NAME],
-                     "role": user.get("role", "reader")
+                     "role": user.get("role", "Author")
                      }
         }, 201
 
@@ -802,7 +804,7 @@ class Login(Resource):
                 "message": f"Welcome back, {user[usr.NAME]}!",
                 "name": user[usr.NAME],
                 "level": user.get(usr.LEVEL, 0),
-                "role": user.get("role", "reader")
+                "role": user.get("role", "Author")
             }, 200
         else:
             return {"message": "Invalid credentials."}, 401
@@ -815,7 +817,8 @@ class AllUsers(Resource):
         sanitized_users = {
             email: {
                 usr.NAME: user.get(usr.NAME),
-                usr.LEVEL: user.get(usr.LEVEL)
+                usr.LEVEL: user.get(usr.LEVEL),
+                "role": user.get("role")
             }
             for email, user in users.items()
         }
